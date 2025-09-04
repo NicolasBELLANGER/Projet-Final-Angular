@@ -1,0 +1,7 @@
+echo ""
+echo "🔍 Lint staged en cours..."
+echo ""
+
+npx lint-staged --no-stash
+echo ""
+echo "✅  Pré-commit terminé avec succès !"
