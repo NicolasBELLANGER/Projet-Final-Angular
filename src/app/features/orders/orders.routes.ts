@@ -1,7 +1,8 @@
-import { OrdersComponent } from './components/orders.component';
-export const ORDERS_ROUTES = [
+import { Routes } from '@angular/router';
+
+export const ORDERS_ROUTES: Routes = [
   {
     path: '',
-    component: OrdersComponent,
+    loadComponent: () => import('./components/orders.component').then((m) => m.OrdersComponent),
   },
 ];

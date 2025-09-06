@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { signal } from '@angular/core';
 
@@ -92,6 +92,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loginForm: FormGroup;
   loading = signal(false);
@@ -113,7 +114,8 @@ export class LoginComponent {
         next: (user) => {
           this.loading.set(false);
           this.authService.setCurrentUser(user);
-          this.router.navigate(['/todos']);
+          const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') || '/catalog';
+          this.router.navigateByUrl(redirectTo);
         },
         error: (err) => {
           this.loading.set(false);

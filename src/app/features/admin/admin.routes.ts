@@ -1,7 +1,8 @@
-import { AdminComponent } from './components/admin.component';
-export const ADMIN_ROUTES = [
+import { Routes } from '@angular/router';
+
+export const ADMIN_ROUTES: Routes = [
   {
     path: '',
-    component: AdminComponent,
+    loadComponent: () => import('./components/admin.component').then((m) => m.AdminComponent),
   },
 ];

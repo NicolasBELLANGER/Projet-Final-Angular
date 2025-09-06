@@ -1,7 +1,8 @@
-import { CheckoutComponent } from './components/checkout.component';
-export const CHECKOUT_ROUTES = [
+import { Routes } from '@angular/router';
+
+export const CHECKOUT_ROUTES: Routes = [
   {
     path: '',
-    component: CheckoutComponent,
+    loadComponent: () => import('./components/checkout.component').then((m) => m.CheckoutComponent),
   },
 ];

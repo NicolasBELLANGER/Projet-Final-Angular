@@ -1,7 +1,8 @@
-import { CatalogComponent } from './components/catalog.component';
-export const CATALOG_ROUTES = [
+import { Routes } from '@angular/router';
+
+export const CATALOG_ROUTES: Routes = [
   {
     path: '',
-    component: CatalogComponent,
+    loadComponent: () => import('./components/catalog.component').then((m) => m.CatalogComponent),
   },
 ];
