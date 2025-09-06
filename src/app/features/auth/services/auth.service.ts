@@ -96,36 +96,30 @@ export class AuthService {
   }
 
   private saveUserToStorage(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('users', JSON.stringify(this.users));
-      localStorage.setItem('usersPassword', JSON.stringify(this.passwords));
-    }
+    localStorage.setItem('users', JSON.stringify(this.users));
+    localStorage.setItem('usersPassword', JSON.stringify(this.passwords));
   }
 
   private loadUserFromStorage(): void {
-    if (typeof window !== 'undefined') {
-      const savedUsers = localStorage.getItem('users');
-      const savedPasswords = localStorage.getItem('usersPassword');
+    const savedUsers = localStorage.getItem('users');
+    const savedPasswords = localStorage.getItem('usersPassword');
 
-      if (savedUsers && savedPasswords) {
-        this.users = JSON.parse(savedUsers);
-        this.passwords = JSON.parse(savedPasswords);
-      } else {
-        this.users = [...this.defaultUsers];
-        this.passwords = { ...this.defaultPasswords };
-        this.saveUserToStorage();
-      }
+    if (savedUsers && savedPasswords) {
+      this.users = JSON.parse(savedUsers);
+      this.passwords = JSON.parse(savedPasswords);
+    } else {
+      this.users = [...this.defaultUsers];
+      this.passwords = { ...this.defaultPasswords };
+      this.saveUserToStorage();
     }
   }
 
   private clearAllUsersData(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('users');
-      localStorage.removeItem('usersPassword');
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('authToken');
-      this.loadUserFromStorage();
-    }
+    localStorage.removeItem('users');
+    localStorage.removeItem('usersPassword');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
+    this.loadUserFromStorage();
   }
 
   getToken(): string | null {
