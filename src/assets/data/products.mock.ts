@@ -9,7 +9,7 @@ export const PRODUCTS = [
     image1: './images/AirForce1White.avif',
     image2: './images/AirForce1Black.avif',
     description:
-      "Confortable, résistante et intemporelle : elle n'est pas numéro 1 pour rien. La conception culte des années 80, avec du cuir lisse et des détails originaux. Un plaisir sur le terrain comme au quotidien.",
+      'Confortable, résistante et intemporelle : elle n\'est pas numéro 1 pour rien. La conception culte des années 80, avec du cuir lisse et des détails originaux. Un plaisir sur le terrain comme au quotidien.',
   },
   {
     id: '2',
@@ -21,7 +21,7 @@ export const PRODUCTS = [
     image1: '.images/NikeP6000White.avif',
     image2: './images/ANikeP6000Purple.avif',
     description:
-      "Véritable clin d'œil aux anciennes Pegasus, la P-6000 fait entrer le running du début des années 2000 dans la modernité. Elle présente des lignes sportives et des tissus respirants. Et avec son amorti en mousse, elle donne l'impression de porter une vraie chaussure d'athlétisme, le confort en plus.",
+      'Véritable clin d\'œil aux anciennes Pegasus, la P-6000 fait entrer le running du début des années 2000 dans la modernité. Elle présente des lignes sportives et des tissus respirants. Et avec son amorti en mousse, elle donne l\'impression de porter une vraie chaussure d\'athlétisme, le confort en plus.',
   },
   {
     id: '3',
@@ -43,7 +43,7 @@ export const PRODUCTS = [
     colors: ['Orange'],
     image1: '.images/NikePhantomLowElite.avif',
     description:
-      "La précision est ton obsession ? Nous aussi. C'est pour ça que la Phantom 6 Elite intègre la technologie Gripknit révolutionnaire. Cette texture ultra-adhérente rapproche ton pied du ballon et t'aide à garder le contrôle pour ne manquer aucune opportunité. Associée à la plaque d'adhérence Cyclone 360, elle te donne aussi un avantage pour changer de direction en un clin d'œil et marquer des buts.",
+      'La précision est ton obsession ? Nous aussi. C\'est pour ça que la Phantom 6 Elite intègre la technologie Gripknit révolutionnaire. Cette texture ultra-adhérente rapproche ton pied du ballon et t\'aide à garder le contrôle pour ne manquer aucune opportunité. Associée à la plaque d\'adhérence Cyclone 360, elle te donne aussi un avantage pour changer de direction en un clin d\'œil et marquer des buts.',
   },
   {
     id: '5',
@@ -55,7 +55,7 @@ export const PRODUCTS = [
     image1: '.images/AirMaxPlusGWhite.avif',
     image2: '.images/AirMaxPlusGBlack.avif',
     description:
-      "Il faut le voir pour le croire. Avec cette légende du streetwear parfaite pour les links, tu as tout pour libérer ton potentiel. Ce modèle Air Max Plus reprend les célèbres caractéristiques de la gamme Plus, comme la matière imperméable et le motif d'adhérence spécialement conçu pour le golf.",
+      'Il faut le voir pour le croire. Avec cette légende du streetwear parfaite pour les links, tu as tout pour libérer ton potentiel. Ce modèle Air Max Plus reprend les célèbres caractéristiques de la gamme Plus, comme la matière imperméable et le motif d\'adhérence spécialement conçu pour le golf.',
   },
   {
     id: '6',
@@ -90,7 +90,7 @@ export const PRODUCTS = [
     image1: '.images/AiirJordanLowVert.avif',
     image2: '.images/AirJordanLowBleu.avif',
     description:
-      "Toujours stylée, toujours tendance. Fidèle à l'histoire et à l'héritage de Jordan, la Air Jordan 1 Low t'offre un confort optimal tout au long de la journée. Choisis tes couleurs et démarque-toi grâce à sa silhouette emblématique conçue dans un mélange de matières haut de gamme et agrémentée d'une unité Air encapsulée au talon.",
+      'Toujours stylée, toujours tendance. Fidèle à l\'histoire et à l\'héritage de Jordan, la Air Jordan 1 Low t\'offre un confort optimal tout au long de la journée. Choisis tes couleurs et démarque-toi grâce à sa silhouette emblématique conçue dans un mélange de matières haut de gamme et agrémentée d\'une unité Air encapsulée au talon.',
   },
   {
     id: '9',
@@ -101,7 +101,7 @@ export const PRODUCTS = [
     colors: ['White', 'Blue'],
     image1: '.images/JordanSpizikeLowBleue.avif',
     description:
-      "Michael Jordan n'a pas peur de se fixer des objectifs que beaucoup pensent impossibles. Cette Spizike célèbre sa confiance en lui avec un design hors du commun. Les étoiles et les détails phosphorescents te rappellent de viser haut pour réaliser tes rêves. Car ton potentiel n'a pas de limites.",
+      'Michael Jordan n\'a pas peur de se fixer des objectifs que beaucoup pensent impossibles. Cette Spizike célèbre sa confiance en lui avec un design hors du commun. Les étoiles et les détails phosphorescents te rappellent de viser haut pour réaliser tes rêves. Car ton potentiel n\'a pas de limites.',
   },
   {
     id: '10',
@@ -112,6 +112,6 @@ export const PRODUCTS = [
     colors: ['Pink'],
     image1: '.images/NikeMercurialPink.avif',
     description:
-      "Ta priorité, c'est la vitesse ? La chaussure à crampons Pro est faite pour celles et ceux qui aiment accélérer le rythme tout au long du match. C'est pour ça qu'on a conçu la Superfly 10 avec une unité Air Zoom améliorée. Elle donne la sensation de propulsion nécessaire pour percer la défense comme les pros. Passe au niveau supérieur avec cette chaussure qui intègre les plus grandes innovations de Nike, comme le Flyknit sur l'empeigne. Encore plus légère, cette chaussure à crampons permet un jeu rapide.",
+      'Ta priorité, c\'est la vitesse ? La chaussure à crampons Pro est faite pour celles et ceux qui aiment accélérer le rythme tout au long du match. C\'est pour ça qu\'on a conçu la Superfly 10 avec une unité Air Zoom améliorée. Elle donne la sensation de propulsion nécessaire pour percer la défense comme les pros. Passe au niveau supérieur avec cette chaussure qui intègre les plus grandes innovations de Nike, comme le Flyknit sur l\'empeigne. Encore plus légère, cette chaussure à crampons permet un jeu rapide.',
   },
 ];
