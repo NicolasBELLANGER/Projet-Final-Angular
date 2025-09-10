@@ -1,6 +1,8 @@
-export const PRODUCTS = [
+import { Product } from '../../app/features/catalog/models/catalog.model';
+
+export const PRODUCTS: Product[] = [
   {
-    id: '1',
+    id: 1,
     name: 'Air Force 1',
     brand: 'Nike',
     price: 119,
@@ -12,7 +14,7 @@ export const PRODUCTS = [
       'Confortable, résistante et intemporelle : elle n\'est pas numéro 1 pour rien. La conception culte des années 80, avec du cuir lisse et des détails originaux. Un plaisir sur le terrain comme au quotidien.',
   },
   {
-    id: '2',
+    id: 2,
     name: 'Nike P-6000 SE',
     brand: 'Nike',
     price: 120,
@@ -24,7 +26,7 @@ export const PRODUCTS = [
       'Véritable clin d\'œil aux anciennes Pegasus, la P-6000 fait entrer le running du début des années 2000 dans la modernité. Elle présente des lignes sportives et des tissus respirants. Et avec son amorti en mousse, elle donne l\'impression de porter une vraie chaussure d\'athlétisme, le confort en plus.',
   },
   {
-    id: '3',
+    id: 3,
     name: 'Nike Air Max 90',
     brand: 'Nike',
     price: 150,
@@ -35,7 +37,7 @@ export const PRODUCTS = [
     description: 'Le modèle intemporel au design skate légendaire.',
   },
   {
-    id: '4',
+    id: 4,
     name: 'Nike Phantom 6 Low Elite',
     brand: 'Nike',
     price: 270,
@@ -46,7 +48,7 @@ export const PRODUCTS = [
       'La précision est ton obsession ? Nous aussi. C\'est pour ça que la Phantom 6 Elite intègre la technologie Gripknit révolutionnaire. Cette texture ultra-adhérente rapproche ton pied du ballon et t\'aide à garder le contrôle pour ne manquer aucune opportunité. Associée à la plaque d\'adhérence Cyclone 360, elle te donne aussi un avantage pour changer de direction en un clin d\'œil et marquer des buts.',
   },
   {
-    id: '5',
+    id: 5,
     name: 'Nike Air Max Plus G',
     brand: 'Nike',
     price: 200,
@@ -58,7 +60,7 @@ export const PRODUCTS = [
       'Il faut le voir pour le croire. Avec cette légende du streetwear parfaite pour les links, tu as tout pour libérer ton potentiel. Ce modèle Air Max Plus reprend les célèbres caractéristiques de la gamme Plus, comme la matière imperméable et le motif d\'adhérence spécialement conçu pour le golf.',
   },
   {
-    id: '6',
+    id: 6,
     name: 'Nike Dunk Low',
     brand: 'Nike',
     price: 120,
@@ -70,7 +72,7 @@ export const PRODUCTS = [
       'On peut toujours compter sur un classique. Color block emblématique. Matières premium. Rembourrage moelleux. La Dunk Low est toujours plus confortable et résistante. Les possibilités sont infinies : et toi, comment tu vas porter tes Dunk ?',
   },
   {
-    id: '7',
+    id: 7,
     name: 'Air Jordan 1 Mid',
     brand: 'Nike',
     price: 140,
@@ -81,7 +83,7 @@ export const PRODUCTS = [
       'Inspiré de la AJ1 originale, ce modèle mi-montant conserve le look emblématique que tu aimes tant, tandis que le choix des couleurs et le cuir impeccable lui confèrent une identité unique.',
   },
   {
-    id: '8',
+    id: 8,
     name: 'Air Jordan 1 Low',
     brand: 'Nike',
     price: 130,
@@ -93,7 +95,7 @@ export const PRODUCTS = [
       'Toujours stylée, toujours tendance. Fidèle à l\'histoire et à l\'héritage de Jordan, la Air Jordan 1 Low t\'offre un confort optimal tout au long de la journée. Choisis tes couleurs et démarque-toi grâce à sa silhouette emblématique conçue dans un mélange de matières haut de gamme et agrémentée d\'une unité Air encapsulée au talon.',
   },
   {
-    id: '9',
+    id: 9,
     name: 'Jordan Spizike Low Sneaker School',
     brand: 'Nike',
     price: 130,
@@ -104,7 +106,7 @@ export const PRODUCTS = [
       'Michael Jordan n\'a pas peur de se fixer des objectifs que beaucoup pensent impossibles. Cette Spizike célèbre sa confiance en lui avec un design hors du commun. Les étoiles et les détails phosphorescents te rappellent de viser haut pour réaliser tes rêves. Car ton potentiel n\'a pas de limites.',
   },
   {
-    id: '10',
+    id: 10,
     name: 'Nike Mercurial Superfly 10 Pro',
     brand: 'Nike',
     price: 170,
