@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { PRODUCTS } from '../../../../assets/data/products.mock';
-import { CreateProductRequest, Product } from '../models/catalog.model';
+import { CreateProductRequest, Product, UpdateProductRequest } from '../models/catalog.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogService {
-  private products = PRODUCTS;
+  private products = signal<Product[]>(PRODUCTS);
 
   constructor() {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('products') : null;
@@ -23,11 +23,7 @@ export class CatalogService {
   //GETPRODUCTBYID Récuperer un produit par son ID
   async getProductById(id: number) {
     console.log(`🔄 Service: Récupération du todo ${id}...`);
-
-    const product = this.products.find((product) => product.id === id);
-    if (!product) {
-      throw new Error('Product not found');
-    }
+    const product = this.products().find((product) => product.id === id);
     console.log(`✅ Service: Todo ${id} récupéré:`, product);
     return product;
   }
@@ -44,8 +40,38 @@ export class CatalogService {
         image2: productData.image2,
         description: productData.description,
     };
-    this.products.push(newProduct);
+    this.products.update((products) => [...products, newProduct]);
     localStorage.setItem('products', JSON.stringify(this.products));
+    console.log('✅ Service: Todo créé avec succès:', newProduct);
     return newProduct;
+  }
+  //UPDATEPRODUCT Mettre à jour un produit existant
+  async updateProduct(id: number, updates: Partial<UpdateProductRequest>): Promise<Product | null> {
+    let updatedProduct: Product | undefined;
+    this.products.update((products) =>
+      products.map((product) => {
+        if (product.id === id) {
+          updatedProduct = { ...product, ...updates };
+          return updatedProduct;
+        }
+        return product;
+      })
+    );
+    localStorage.setItem('products', JSON.stringify(this.products));
+    console.log(`✅ Service: Todo ${id} mis à jour avec succès:`, updatedProduct);
+    return updatedProduct || null;
+  }
+  //DELETEPRODUCT Supprimer un produit par son ID
+  async deleteProduct(id: number): Promise<boolean> {
+    let deleted = false;
+    this.products.update((products) => {
+      const initialLength = products.length;
+      const updatedProducts = products.filter((product) => product.id !== id);
+      deleted = updatedProducts.length < initialLength;
+      return updatedProducts;
+    });
+    localStorage.setItem('products', JSON.stringify(this.products));
+    console.log(`✅ Service: Todo ${id} ${deleted ? 'supprimé' : 'non trouvé'}.`);
+    return deleted;
   }
 }
