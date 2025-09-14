@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal, computed } from '@angular/core';
 import { PRODUCTS } from '../../../../assets/data/products.mock';
 import { CreateProductRequest, Product, UpdateProductRequest } from '../models/catalog.model';
 
@@ -6,13 +6,29 @@ import { CreateProductRequest, Product, UpdateProductRequest } from '../models/c
   providedIn: 'root',
 })
 export class CatalogService {
-  public products = signal<Product[]>(PRODUCTS);
+  //State privé (modifiable dans le service)
+  private readonly _products = signal<Product[]>(PRODUCTS);
+  //State public (en lecture pour les autres composants)
+  readonly products = this._products.asReadonly();
+
+  //Computed
+  readonly totalProducts = computed(() => this._products().length);
+  readonly priceRange = computed(() => {
+    const prices = this._products().map((p) => p.price);
+    return prices.length
+      ? { min: Math.min(...prices), max: Math.max(...prices) }
+      : { min: 0, max: 0 };
+  });
 
   constructor() {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('products') : null;
     if (saved) {
-      this.products.set(JSON.parse(saved));
+      this._products.set(JSON.parse(saved));
     }
+    //Effect pour sauvegarder dans le localStorage à chaque modification de la liste des produits
+    effect(() => {
+      localStorage.setItem('products', JSON.stringify(this._products()));
+    });
   }
 
   private delay(ms: number): Promise<void> {
@@ -24,7 +40,7 @@ export class CatalogService {
     console.log('🔄 Service: Récupération de tous les todos...');
     await this.delay(300);
     console.log('✅ Service: Todos récupérés avec succès');
-    return this.products;
+    return this._products();
   }
 
   //GETPRODUCTBYID Récuperer un produit par son ID
@@ -37,22 +53,20 @@ export class CatalogService {
   }
 
   //CREATEPRODUCT Créer un nouveau produit
-  async createProduct(productData : CreateProductRequest): Promise<Product>{
+  async createProduct(productData: CreateProductRequest): Promise<Product> {
     await this.delay(400);
     const newProduct: Product = {
-        id: Date.now(),
-        name: productData.name,
-        brand: productData.brand,
-        price: productData.price,
-        sizes: productData.sizes,
-        colors: productData.colors,
-        image1: productData.image1,
-        image2: productData.image2,
-        description: productData.description,
+      id: Date.now(),
+      name: productData.name,
+      brand: productData.brand,
+      price: productData.price,
+      sizes: productData.sizes,
+      colors: productData.colors,
+      image1: productData.image1,
+      image2: productData.image2,
+      description: productData.description,
     };
-    this.products.update((products) => [...products, newProduct]);
-    localStorage.setItem('products', JSON.stringify(this.products()));
-
+    this._products.update((products) => [...products, newProduct]);
     console.log('✅ Service: Todo créé avec succès:', newProduct);
     return newProduct;
   }
@@ -63,17 +77,16 @@ export class CatalogService {
     await this.delay(300);
 
     let updatedProduct: Product | undefined;
-    this.products.update((products) =>
+    this._products.update((products) =>
       products.map((product) => {
         if (product.id === id) {
           updatedProduct = { ...product, ...updates };
           return updatedProduct;
         }
         return product;
-      })
+      }),
     );
 
-    localStorage.setItem('products', JSON.stringify(this.products()));
     console.log(`✅ Service: Todo ${id} mis à jour avec succès:`, updatedProduct);
     return updatedProduct || null;
   }
@@ -84,14 +97,13 @@ export class CatalogService {
     await this.delay(250);
 
     let deleted = false;
-    this.products.update((products) => {
+    this._products.update((products) => {
       const initialLength = products.length;
       const updatedProducts = products.filter((product) => product.id !== id);
       deleted = updatedProducts.length < initialLength;
       return updatedProducts;
     });
 
-    localStorage.setItem('products', JSON.stringify(this.products()));
     console.log(`✅ Service: Todo ${id} ${deleted ? 'supprimé' : 'non trouvé'}.`);
     return deleted;
   }

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CatalogService } from '../services/catalog.service';
@@ -17,11 +17,85 @@ import { Product } from '../models/catalog.model';
         moment, découvrez une sélection pointue mêlant style, confort et performance. Nike, adidas,
         New Balance, Jordan, ASICS… et bien plus — trouvez la paire qui vous ressemble.
       </p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="mx-auto max-w-6xl mb-8 grid gap-6">
+        <fieldset>
+          <legend class="text-sm font-medium">Prix</legend>
+          <div class="mt-3 flex items-center gap-3">
+            <label class="text-xs text-neutral-600" for="minNumber">Min</label>
+            <input
+              id="minNumber"
+              type="number"
+              inputmode="decimal"
+              class="w-28 border px-2 py-1 text-sm"
+              [min]="priceRange().min"
+              [max]="maxPrice()"
+              step="0.01"
+              [value]="minPrice()"
+              (input)="onMinPriceInput(+$any($event.target).value)"
+            />
+            <label class="text-xs text-neutral-600" for="maxNumber">Max</label>
+            <input
+              id="maxNumber"
+              type="number"
+              inputmode="decimal"
+              class="w-28 border px-2 py-1 text-sm"
+              [min]="minPrice()"
+              [max]="priceRange().max"
+              step="0.01"
+              [value]="maxPrice()"
+              (input)="onMaxPriceInput(+$any($event.target).value)"
+            />
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="text-sm font-medium mb-2">Marques</legend>
+          <div class="flex flex-wrap gap-3">
+            <ng-container *ngFor="let b of brands(); let i = index; trackBy: trackByStr">
+              <input
+                type="checkbox"
+                class="size-4"
+                [id]="'brand-' + i"
+                [checked]="selectedBrands().includes(b)"
+                (change)="toggleBrand(b)"
+              />
+              <label
+                class="inline-flex items-center gap-2 cursor-pointer"
+                [attr.for]="'brand-' + i"
+              >
+                <span class="text-sm">{{ b }}</span>
+              </label>
+            </ng-container>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="text-sm font-medium mb-2">Couleurs</legend>
+          <div class="flex flex-wrap gap-3">
+            <ng-container *ngFor="let c of colors(); let i = index; trackBy: trackByStr">
+              <input
+                type="checkbox"
+                class="size-4"
+                [id]="'color-' + i"
+                [checked]="selectedColors().includes(c)"
+                (change)="toggleColor(c)"
+              />
+              <label
+                class="inline-flex items-center gap-2 cursor-pointer"
+                [attr.for]="'color-' + i"
+              >
+                <span class="text-sm">{{ c }}</span>
+              </label>
+            </ng-container>
+          </div>
+        </fieldset>
+      </div>
+      <p class="text-center text-sm text-neutral-600 mb-6">
+        {{ visibleProducts().length }} / {{ totalProducts() }} produits affichés
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
         <a
-          *ngFor="let p of products(); trackBy: trackById"
+          *ngFor="let p of visibleProducts(); trackBy: trackById"
           [routerLink]="['/product', p.id]"
-          class="group block"
+          class="group block focus:outline-none focus:ring-2 focus:ring-black"
         >
           <div class="bg-neutral-100 aspect-[4/3] overflow-hidden">
             <img
@@ -45,6 +119,81 @@ import { Product } from '../models/catalog.model';
 export class CatalogComponent {
   private catalog = inject(CatalogService);
   products = this.catalog.products;
+  totalProducts = this.catalog.totalProducts;
+  priceRange = this.catalog.priceRange;
+
+  minPrice = signal(0);
+  maxPrice = signal(0);
+  selectedBrands = signal<string[]>([]);
+  selectedColors = signal<string[]>([]);
+
+  constructor() {
+    const range = this.priceRange();
+    this.minPrice.set(range.min);
+    this.maxPrice.set(range.max);
+  }
+
+  brands = computed(() => {
+    const set = new Set(
+      this.products()
+        .map((p) => p.brand)
+        .filter(Boolean),
+    );
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  });
+
+  colors = computed(() => {
+    const set = new Set(
+      this.products()
+        .flatMap((p) => p.colors ?? [])
+        .filter(Boolean),
+    );
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  });
+
+  onMinPriceInput(val: number) {
+    const range = this.priceRange();
+    const clamped = Math.min(Math.max(val, range.min), this.maxPrice());
+    this.minPrice.set(clamped);
+  }
+  onMaxPriceInput(val: number) {
+    const range = this.priceRange();
+    const clamped = Math.max(Math.min(val, range.max), this.minPrice());
+    this.maxPrice.set(clamped);
+  }
+
+  toggleBrand(brand: string) {
+    const current = this.selectedBrands();
+    if (current.includes(brand)) {
+      this.selectedBrands.set(current.filter((b) => b !== brand));
+    } else {
+      this.selectedBrands.set([...current, brand]);
+    }
+  }
+  toggleColor(color: string) {
+    const current = this.selectedColors();
+    if (current.includes(color)) {
+      this.selectedColors.set(current.filter((c) => c !== color));
+    } else {
+      this.selectedColors.set([...current, color]);
+    }
+  }
+
+  visibleProducts = computed<Product[]>(() => {
+    const list = this.products();
+    const min = this.minPrice();
+    const max = this.maxPrice();
+    const brands = this.selectedBrands();
+    const colors = this.selectedColors();
+
+    return list.filter((p) => {
+      const okPrice = p.price >= min && p.price <= max;
+      const okBrand = brands.length === 0 || brands.includes(p.brand);
+      const okColor = colors.length === 0 || (p.colors ?? []).some((c) => colors.includes(c));
+      return okPrice && okBrand && okColor;
+    });
+  });
 
   trackById = (_: number, p: Product) => p.id;
+  trackByStr = (_: number, s: string) => s;
 }
