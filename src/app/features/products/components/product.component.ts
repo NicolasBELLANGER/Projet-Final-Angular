@@ -3,11 +3,12 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CatalogService } from '../../catalog/services/catalog.service';
 import { Product } from '../../catalog/models/catalog.model';
+import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ColorsPipe],
   template: `
     <section class="px-6 md:px-8 lg:px-12 py-10 max-w-6xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -37,7 +38,7 @@ import { Product } from '../../catalog/models/catalog.model';
           <div class="mt-6" *ngIf="product?.colors?.length">
             <label for="color" class="block text-sm font-medium mb-2">Couleur</label>
             <select id="color" class="w-48 border px-3 py-2 text-sm bg-white">
-              <option *ngFor="let c of product?.colors" [value]="c">{{ c }}</option>
+              <option *ngFor="let c of product?.colors" [value]="c">{{ c | colors }}</option>
             </select>
           </div>
 

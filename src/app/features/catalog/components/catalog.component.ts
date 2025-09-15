@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CatalogService } from '../services/catalog.service';
 import { Product } from '../models/catalog.model';
+import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ColorsPipe],
   template: `
     <section class="px-6 md:px-8 lg:px-12 py-10">
       <p
@@ -82,7 +83,7 @@ import { Product } from '../models/catalog.model';
                 class="inline-flex items-center gap-2 cursor-pointer"
                 [attr.for]="'color-' + i"
               >
-                <span class="text-sm">{{ c }}</span>
+                <span class="text-sm">{{ c | colors }}</span>
               </label>
             </ng-container>
           </div>
