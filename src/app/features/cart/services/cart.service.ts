@@ -44,6 +44,20 @@ export class CartService {
     }
   }
 
+  async deleteOneFromCart(productId: number): Promise<void> {
+    await this.delay(200);
+    const items = this._cartItems();
+    const index = items.findIndex((item) => item.product.id === productId);
+    if (index > -1) {
+      if (items[index].quantity > 1) {
+        items[index].quantity -= 1;
+        this._cartItems.set([...items]);
+      } else {
+        this._cartItems.set(items.filter((item) => item.product.id !== productId));
+      }
+    }
+  }
+
   async deleteFromCart(productId: number): Promise<void> {
     await this.delay(200);
     this._cartItems.set(this._cartItems().filter((item) => item.product.id !== productId));
