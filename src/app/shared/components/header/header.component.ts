@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { CartService } from '../../../features/cart/services/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -65,8 +66,10 @@ import { AuthService } from '../../../features/auth/services/auth.service';
 export class HeaderComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+  private cartService = inject(CartService);
 
   currentUser = this.auth.currentUser$;
+  cartCount = this.cartService.totalItems;
 
   goCart() {
     this.router.navigate(['/cart']);
@@ -74,9 +77,5 @@ export class HeaderComponent {
   logout() {
     this.auth.logout();
     this.router.navigate(['/auth/login']);
-  }
-
-  cartCount() {
-    return 0;
   }
 }

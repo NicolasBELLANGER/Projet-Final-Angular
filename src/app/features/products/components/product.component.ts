@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CatalogService } from '../../catalog/services/catalog.service';
 import { Product } from '../../catalog/models/catalog.model';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
+import { CartService } from '../../cart/services/cart.service';
 
 @Component({
   selector: 'app-product',
@@ -43,7 +44,7 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
           </div>
 
           <div class="mt-8">
-            <button type="button" class="px-5 py-3 bg-black text-white font-semibold hover:opacity-90">
+            <button type="button" class="px-5 py-3 bg-black text-white font-semibold hover:opacity-90" (click)="addToCart()">
               Ajouter au panier
             </button>
           </div>
@@ -55,6 +56,7 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 export class ProductComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly catalog = inject(CatalogService);
+  private readonly cart = inject(CartService);
 
   product?: Product;
 
@@ -62,4 +64,10 @@ export class ProductComponent {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.catalog.getProductById(id).then(p => (this.product = p || undefined));
   }
+
+  addToCart() {
+  if (this.product) {
+    this.cart.addToCart(this.product);
+  }
+}
 }
