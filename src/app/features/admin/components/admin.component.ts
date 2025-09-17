@@ -7,6 +7,7 @@ import { User } from '../../auth/models/user.model';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
+import { CartService } from '../../cart/services/cart.service';
 
 @Component({
   selector: 'app-admin',
@@ -105,6 +106,7 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 export class AdminComponent implements OnInit {
   private authService = inject(AuthService);
   private catalogService = inject(CatalogService);
+  private cartService = inject(CartService);
   private router = inject(Router);
 
   activeTab = signal<'users' | 'products'>('users');
@@ -152,10 +154,11 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  async deleteProducts(todoId: number) {
+  async deleteProducts(productId: number) {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?')) {
       try {
-        await this.catalogService.deleteProduct(todoId);
+        await this.catalogService.deleteProduct(productId);
+        await this.cartService.deleteFromCart(productId);
         await this.loadProducts();
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
