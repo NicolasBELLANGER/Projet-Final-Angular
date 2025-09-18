@@ -2,7 +2,11 @@ import { effect, Injectable, signal, computed } from '@angular/core';
 import { Product } from '../../catalog/models/catalog.model';
 
 export interface CartItem {
-  product: Product;
+  productId: number;
+  name: string;
+  price: number;
+  size: number;
+  color: string;
   quantity: number;
 }
 
@@ -15,7 +19,7 @@ export class CartService {
 
   readonly totalItems = computed(() => this._cartItems().reduce((total, item) => total + item.quantity, 0));
   readonly totalPrice = computed(() =>
-    this._cartItems().reduce((total, item) => total + item.product.price * item.quantity, 0)
+    this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0)
   );
 
   constructor() {
@@ -32,35 +36,38 @@ export class CartService {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async addToCart(product: Product, quantity = 1): Promise<void> {
+  async addToCart(product: Product, size: number, color: string, quantity = 1): Promise<void> {
     await this.delay(200);
     const items = this._cartItems();
-    const index = items.findIndex((item) => item.product.id === product.id);
+    const index = items.findIndex((item) => item.productId === product.id && item.size === size && item.color === color);
     if (index > -1) {
       items[index].quantity += quantity;
       this._cartItems.set([...items]);
     } else {
-      this._cartItems.set([...items, { product, quantity }]);
+      this._cartItems.set([
+        ...items,
+        { productId: product.id, name: product.name, price: product.price, size, color, quantity },
+      ]);
     }
   }
 
   async deleteOneFromCart(productId: number): Promise<void> {
     await this.delay(200);
     const items = this._cartItems();
-    const index = items.findIndex((item) => item.product.id === productId);
+    const index = items.findIndex((item) => item.productId === productId);
     if (index > -1) {
       if (items[index].quantity > 1) {
         items[index].quantity -= 1;
         this._cartItems.set([...items]);
       } else {
-        this._cartItems.set(items.filter((item) => item.product.id !== productId));
+        this._cartItems.set(items.filter((item) => item.productId !== productId));
       }
     }
   }
 
   async deleteFromCart(productId: number): Promise<void> {
     await this.delay(200);
-    this._cartItems.set(this._cartItems().filter((item) => item.product.id !== productId));
+    this._cartItems.set(this._cartItems().filter((item) => item.productId !== productId));
   }
 
   async getAllCartItems(): Promise<CartItem[]> {
