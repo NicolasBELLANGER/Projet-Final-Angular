@@ -1,5 +1,6 @@
-import { effect, Injectable, signal, computed } from '@angular/core';
+import { effect, Injectable, signal, computed, inject } from '@angular/core';
 import { Product } from '../../catalog/models/catalog.model';
+import { AuthService } from '../../auth/services/auth.service';
 
 export interface CartItem {
   productId: number;
@@ -17,21 +18,49 @@ export class CartService {
   private readonly _cartItems = signal<CartItem[]>([]);
   readonly cartItems = this._cartItems.asReadonly();
 
-  readonly totalItems = computed(() => this._cartItems().reduce((total, item) => total + item.quantity, 0));
+  readonly totalItems = computed(() =>
+    this._cartItems().reduce((total, item) => total + item.quantity, 0),
+  );
   readonly totalPrice = computed(() =>
-    this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0)
+    this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0),
   );
 
   private userId: number | null = null;
 
   constructor() {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('cart') : null;
-    if (saved) {
-      this._cartItems.set(JSON.parse(saved));
-    }
+    const auth = inject(AuthService);
+
     effect(() => {
-      localStorage.setItem('cart', JSON.stringify(this._cartItems()));
+      const user = auth.currentUser$();
+      const newUserId = user?.id ?? null;
+      if (this.userId !== newUserId) {
+        this.userId = newUserId;
+        this.loadCartForUser(this.userId);
+      }
     });
+
+    effect(() => {
+      if (this.userId !== null) {
+        const allCarts = this.getAllCartsFromStorage();
+        allCarts[this.userId] = this._cartItems();
+        localStorage.setItem('carts', JSON.stringify(allCarts));
+      }
+    });
+  }
+
+  private getAllCartsFromStorage(): Record<number, CartItem[]> {
+    const saved = localStorage.getItem('carts');
+    return saved ? JSON.parse(saved) : {};
+  }
+
+  private loadCartForUser(userId: number | null) {
+    if (!userId) {
+      this._cartItems.set([]);
+      return;
+    }
+
+    const allCarts = this.getAllCartsFromStorage();
+    this._cartItems.set(allCarts[userId] || []);
   }
 
   private delay(ms: number): Promise<void> {
@@ -41,7 +70,9 @@ export class CartService {
   async addToCart(product: Product, size: number, color: string, quantity = 1): Promise<void> {
     await this.delay(200);
     const items = this._cartItems();
-    const index = items.findIndex((item) => item.productId === product.id && item.size === size && item.color === color);
+    const index = items.findIndex(
+      (item) => item.productId === product.id && item.size === size && item.color === color,
+    );
     if (index > -1) {
       items[index].quantity += quantity;
       this._cartItems.set([...items]);
