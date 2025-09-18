@@ -20,6 +20,7 @@ import { CartService } from '../../../features/cart/services/cart.service';
         <div class="flex items-center gap-4">
           <!-- Panier -->
           <button
+            *ngIf="currentUser()"
             class="relative p-2 rounded-full hover:bg-gray-100"
             aria-label="Panier"
             (click)="goCart()"

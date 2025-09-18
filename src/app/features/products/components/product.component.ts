@@ -6,13 +6,14 @@ import { Product } from '../../catalog/models/catalog.model';
 import { CartService } from '../../cart/services/cart.service';
 import { ColorHexPipe } from '../../../shared/pipes/color-hex.pipe';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-product',
   standalone: true,
   imports: [CommonModule, RouterModule, ColorHexPipe, FormsModule],
   template: `
-     <section class="px-6 md:px-8 lg:px-12 py-10 max-w-6xl mx-auto">
+    <section class="px-6 md:px-8 lg:px-12 py-10 max-w-6xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="bg-neutral-100 aspect-[3/3] overflow-hidden">
           <img
@@ -61,6 +62,9 @@ import { FormsModule } from '@angular/forms';
             >
               Ajouter au panier
             </button>
+            <div class="text-red-500 text-sm mt-2" *ngIf="!currentUser()">
+              Vous devez être connecté pour ajouter un produit au panier.
+            </div>
           </div>
         </div>
       </div>
@@ -71,6 +75,9 @@ export class ProductComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly catalog = inject(CatalogService);
   private readonly cart = inject(CartService);
+  private readonly auth = inject(AuthService);
+
+  currentUser = this.auth.currentUser$;
 
   product?: Product;
   selectedSize?: number;

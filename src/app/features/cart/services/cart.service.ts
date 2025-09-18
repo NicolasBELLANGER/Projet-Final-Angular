@@ -22,6 +22,8 @@ export class CartService {
     this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0)
   );
 
+  private userId: number | null = null;
+
   constructor() {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('cart') : null;
     if (saved) {
