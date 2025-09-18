@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { CatalogService } from '../services/catalog.service';
 import { Product } from '../models/catalog.model';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
+import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule, ColorsPipe],
+  imports: [CommonModule, RouterModule, ColorsPipe, LowPriceDirective],
   template: `
     <section class="px-6 md:px-8 lg:px-12 py-10">
       <p
@@ -111,17 +112,17 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
           >
             {{ p.name }}
           </h2>
-          <div class="text-lg font-bold">{{ p.price | currency: 'EUR' }}</div>
+          <div class="text-lg font-bold" [appLowPrice]="p.price">{{ p.price | currency: 'EUR' }}</div>
         </a>
       </div>
     </section>
   `,
 })
 export class CatalogComponent {
-  private catalog = inject(CatalogService);
-  products = this.catalog.products;
-  totalProducts = this.catalog.totalProducts;
-  priceRange = this.catalog.priceRange;
+  private catalogService = inject(CatalogService);
+  products = this.catalogService.products;
+  totalProducts = this.catalogService.totalProducts;
+  priceRange = this.catalogService.priceRange;
 
   minPrice = signal(0);
   maxPrice = signal(0);
