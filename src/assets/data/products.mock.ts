@@ -7,7 +7,7 @@ export const PRODUCTS: Product[] = [
     brand: 'Nike',
     price: 119,
     sizes: [39, 40, 41, 42, 43, 44, 45],
-    colors: ['Black', 'White'],
+    colors: ['White', 'Black'],
     image1: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png',
     image2: 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/fc4622c4-2769-4665-aa6e-42c974a7705e/AIR+FORCE+1+%2707.png',
     description: 'Confortable, résistante et intemporelle : elle n\'est pas numéro 1 pour rien. La conception culte des années 80, avec du cuir lisse et des détails originaux. Un plaisir sur le terrain comme au quotidien.',

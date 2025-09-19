@@ -17,7 +17,7 @@ import { AuthService } from '../../auth/services/auth.service';
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="bg-neutral-100 aspect-[3/3] overflow-hidden">
           <img
-            [src]="product?.image1"
+            [src]="mainImage"
             [alt]="product?.name || 'Produit'"
             class="w-full h-full object-cover"
           />
@@ -44,12 +44,12 @@ import { AuthService } from '../../auth/services/auth.service';
 
           <div class="flex gap-2 mt-4">
             <button
-              *ngFor="let c of product?.colors"
+              *ngFor="let c of product?.colors; let i = index"
               class="w-6 h-6 rounded-full border"
               [style.backgroundColor]="c | colorHex"
               [title]="c"
-              [class.border-4]="c === selectedColor"
-              (click)="selectColor(c)"
+              [class.border-4]="i === selectedColorIndex"
+              (click)="selectColor(c, i)"
             ></button>
           </div>
 
@@ -82,6 +82,7 @@ export class ProductComponent {
   product?: Product;
   selectedSize?: number;
   selectedColor?: string;
+  selectedColorIndex?: number;
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -89,11 +90,21 @@ export class ProductComponent {
     if (this.product) {
       this.selectedSize = this.product.sizes[0];
       this.selectedColor = this.product.colors[0];
+      this.selectedColorIndex = 0;
     }
   }
 
-  selectColor(color: string) {
+  get mainImage(): string | undefined {
+    const product = this.product;
+    if (!product) {
+      return undefined;
+    }
+    return this.selectedColorIndex === 1 && product.image2 ? product.image2 : product.image1;
+  }
+
+  selectColor(color: string, index: number) {
     this.selectedColor = color;
+    this.selectedColorIndex = index;
   }
 
   addToCart() {
