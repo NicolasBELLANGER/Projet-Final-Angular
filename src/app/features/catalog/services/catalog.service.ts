@@ -25,7 +25,6 @@ export class CatalogService {
     if (saved) {
       this._products.set(JSON.parse(saved));
     }
-    //Effect pour sauvegarder dans le localStorage à chaque modification de la liste des produits
     effect(() => {
       localStorage.setItem('products', JSON.stringify(this._products()));
     });
@@ -37,18 +36,14 @@ export class CatalogService {
 
   //GETALL Récuperer tous les produits
   async getAllProducts() {
-    console.log('🔄 Service: Récupération de tous les todos...');
     await this.delay(300);
-    console.log('✅ Service: Todos récupérés avec succès');
     return this._products();
   }
 
   //GETPRODUCTBYID Récuperer un produit par son ID
   async getProductById(id: number) {
-    console.log(`🔄 Service: Récupération du todo ${id}...`);
     await this.delay(200);
     const product = this.products().find((product) => product.id === id);
-    console.log(`✅ Service: Todo ${id} récupéré:`, product);
     return product;
   }
 
@@ -67,13 +62,11 @@ export class CatalogService {
       description: productData.description,
     };
     this._products.update((products) => [...products, newProduct]);
-    console.log('✅ Service: Todo créé avec succès:', newProduct);
     return newProduct;
   }
 
   //UPDATEPRODUCT Mettre à jour un produit existant
   async updateProduct(id: number, updates: Partial<UpdateProductRequest>): Promise<Product | null> {
-    console.log(`🔄 Service: Mise à jour du product ${id}...`, updates);
     await this.delay(300);
 
     let updatedProduct: Product | undefined;
@@ -87,13 +80,11 @@ export class CatalogService {
       }),
     );
 
-    console.log(`✅ Service: Todo ${id} mis à jour avec succès:`, updatedProduct);
     return updatedProduct || null;
   }
 
   //DELETEPRODUCT Supprimer un produit par son ID
   async deleteProduct(id: number): Promise<boolean> {
-    console.log(`🔄 Service: Suppression du product ${id}...`);
     await this.delay(250);
 
     let deleted = false;
@@ -104,7 +95,6 @@ export class CatalogService {
       return updatedProducts;
     });
 
-    console.log(`✅ Service: Todo ${id} ${deleted ? 'supprimé' : 'non trouvé'}.`);
     return deleted;
   }
 }

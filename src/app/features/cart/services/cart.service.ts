@@ -25,30 +25,29 @@ export class CartService {
     this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0),
   );
 
-  private userId: number | null = null;
+    private readonly _userId = signal<number | null>(null);
 
   constructor() {
     const auth = inject(AuthService);
 
     effect(() => {
       const user = auth.currentUser$();
-      const newUserId = user?.id ?? null;
-      if (this.userId !== newUserId) {
-        this.userId = newUserId;
-        this.loadCartForUser(this.userId);
-      }
+      this._userId.set(user?.id ?? null);
+      this.loadCartForUser(this._userId());
     });
 
     effect(() => {
-      if (this.userId !== null) {
-        const allCarts = this.getAllCartsFromStorage();
-        allCarts[this.userId] = this._cartItems();
-        localStorage.setItem('carts', JSON.stringify(allCarts));
-      }
+      const uid = this._userId();
+      const items = this._cartItems();
+      if (uid === null) return;
+
+      const allCarts = this.getAllCartsFromStorage();
+      allCarts[String(uid)] = items;
+      localStorage.setItem('carts', JSON.stringify(allCarts));
     });
   }
 
-  private getAllCartsFromStorage(): Record<number, CartItem[]> {
+  private getAllCartsFromStorage(): Record<string, CartItem[]> {
     const saved = localStorage.getItem('carts');
     return saved ? JSON.parse(saved) : {};
   }
@@ -60,7 +59,7 @@ export class CartService {
     }
 
     const allCarts = this.getAllCartsFromStorage();
-    this._cartItems.set(allCarts[userId] || []);
+    this._cartItems.set(allCarts[String(userId)] ?? []);
   }
 
   private delay(ms: number): Promise<void> {

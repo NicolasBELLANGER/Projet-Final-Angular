@@ -41,6 +41,7 @@ import { CartService } from '../../cart/services/cart.service';
       <table class="w-full table-auto border-collapse">
         <thead>
           <tr class="bg-gray-100">
+            <th class="text-left px-4 py-2">Prénom</th>
             <th class="text-left px-4 py-2">Nom</th>
             <th class="text-left px-4 py-2">Email</th>
             <th class="text-left px-4 py-2">Rôle</th>
@@ -49,7 +50,8 @@ import { CartService } from '../../cart/services/cart.service';
         </thead>
         <tbody>
           <tr *ngFor="let user of users()">
-            <td class="px-4 py-2">{{ user.name }}</td>
+            <td class="px-4 py-2">{{ user.firstname }}</td>
+            <td class="px-4 py-2">{{ user.lastname }}</td>
             <td class="px-4 py-2">{{ user.email }}</td>
             <td class="px-4 py-2 capitalize">{{ user.role }}</td>
             <td class="px-4 py-2">
