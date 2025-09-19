@@ -22,13 +22,13 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
       >
         <ng-container *ngIf="getProduct(item.productId) as product">
           <img
-            [src]="product.image1"
-            [alt]="product.name"
+            [src]="item.imageUrl"
+            [alt]="item.name"
             loading="lazy"
             class="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover flex-shrink-0"
           />
           <div class="flex-1">
-            <div class="font-semibold">{{ product.name }}</div>
+            <div class="font-semibold">{{ item.name }}</div>
             <div class="text-sm text-gray-600">
               Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
             </div>
@@ -81,13 +81,13 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
                 <td class="py-3 px-4">
                   <div class="flex items-center gap-4">
                     <img
-                      [src]="product.image1"
-                      [alt]="product.name"
+                      [src]="item.imageUrl"
+                      [alt]="item.name"
                       loading="lazy"
                       class="w-16 h-16 rounded object-cover"
                     />
                     <div>
-                      <div class="font-semibold">{{ product.name }}</div>
+                      <div class="font-semibold">{{ item.name }}</div>
                       <div class="text-sm text-gray-600">
                         Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
                       </div>

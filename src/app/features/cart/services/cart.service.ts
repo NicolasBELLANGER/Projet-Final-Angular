@@ -9,6 +9,7 @@ export interface CartItem {
   size: number;
   color: string;
   quantity: number;
+  imageUrl: string;
 }
 
 @Injectable({
@@ -25,7 +26,7 @@ export class CartService {
     this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0),
   );
 
-    private readonly _userId = signal<number | null>(null);
+  private readonly _userId = signal<number | null>(null);
 
   constructor() {
     const auth = inject(AuthService);
@@ -76,9 +77,19 @@ export class CartService {
       items[index].quantity += quantity;
       this._cartItems.set([...items]);
     } else {
+      const colorIndex = product.colors.findIndex((c) => c === color);
+      const imageUrl = colorIndex === 1 && product.image2 ? product.image2 : product.image1;
       this._cartItems.set([
         ...items,
-        { productId: product.id, name: product.name, price: product.price, size, color, quantity },
+        {
+          productId: product.id,
+          name: product.name,
+          price: product.price,
+          size,
+          color,
+          quantity,
+          imageUrl,
+        },
       ]);
     }
   }
