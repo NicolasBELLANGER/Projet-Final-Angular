@@ -78,8 +78,7 @@ export class AuthService {
   logout(): void {
     this.currentUser.set(null);
     localStorage.removeItem('currentUser');
-    this.clearAllUsersData();
-  }
+    localStorage.removeItem('authToken');}
 
   getCurrentUser(): User | null {
     return this.currentUser();
@@ -117,13 +116,13 @@ export class AuthService {
     }
   }
 
-  private clearAllUsersData(): void {
-    localStorage.removeItem('users');
-    localStorage.removeItem('usersPassword');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('authToken');
-    this.loadUserFromStorage();
-  }
+  // private clearAllUsersData(): void {
+  //   localStorage.removeItem('users');
+  //   localStorage.removeItem('usersPassword');
+  //   localStorage.removeItem('currentUser');
+  //   localStorage.removeItem('authToken');
+  //   this.loadUserFromStorage();
+  // }
 
   getToken(): string | null {
     const user = this.currentUser();
