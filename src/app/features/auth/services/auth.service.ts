@@ -12,13 +12,15 @@ export class AuthService {
   private defaultUsers: User[] = [
     {
       id: 1,
-      name: 'Admin User',
+      lastname: 'Admin',
+      firstname: 'Admin',
       email: 'admin@example.com',
       role: 'admin',
     },
     {
       id: 2,
-      name: 'Normal User',
+      lastname: 'User',
+      firstname: 'User',
       email: 'user@example.com',
       role: 'user',
     },
@@ -59,7 +61,8 @@ export class AuthService {
 
     const newUser: User = {
       id: this.users.length + 1,
-      name: userData.name,
+      lastname: userData.lastname,
+      firstname: userData.firstname,
       email: userData.email,
       role: 'user',
     };

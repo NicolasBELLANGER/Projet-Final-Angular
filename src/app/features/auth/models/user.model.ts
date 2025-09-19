@@ -1,6 +1,7 @@
 export interface User {
   id: number;
-  name: string;
+  lastname: string;
+  firstname: string;
   email: string;
   role: 'user' | 'admin';
 }
@@ -11,7 +12,8 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  name: string;
+  lastname: string;
+  firstname: string;
   email: string;
   password: string;
   confirmPassword: string;

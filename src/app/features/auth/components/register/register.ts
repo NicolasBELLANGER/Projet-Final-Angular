@@ -35,19 +35,36 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
-          <!-- Nom -->
+          <!-- Lastname -->
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700"> Nom complet </label>
+            <label for="lastname" class="block text-sm font-medium text-gray-700"> Nom </label>
             <input
-              id="name"
+              id="lastname"
               type="text"
-              formControlName="name"
+              formControlName="lastname"
               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              [class.border-red-500]="isFieldInvalid('name')"
+              [class.border-red-500]="isFieldInvalid('lastname')"
             />
-            @if (isFieldInvalid('name')) {
+            @if (isFieldInvalid('lastname')) {
               <p class="mt-1 text-sm text-red-600">
-                {{ getFieldError('name') }}
+                {{ getFieldError('lastname') }}
+              </p>
+            }
+          </div>
+
+          <!-- Firstname -->
+          <div>
+            <label for="firstname" class="block text-sm font-medium text-gray-700"> Prénom </label>
+            <input
+              id="firstname"
+              type="text"
+              formControlName="firstname"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="isFieldInvalid('firstname')"
+            />
+            @if (isFieldInvalid('firstname')) {
+              <p class="mt-1 text-sm text-red-600">
+                {{ getFieldError('firstname') }}
               </p>
             }
           </div>
@@ -150,7 +167,8 @@ export class RegisterComponent {
   constructor() {
     this.registerForm = this.fb.group(
       {
-        name: ['', [Validators.required, Validators.minLength(2)]],
+        lastname: ['', [Validators.required, Validators.minLength(2)]],
+        firstname: ['', [Validators.required, Validators.minLength(2)]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
@@ -169,7 +187,7 @@ export class RegisterComponent {
       this.authService.register(userData).subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate(['/todos']);
+          this.router.navigate(['/auth/login']);
         },
         error: (err) => {
           this.loading.set(false);
