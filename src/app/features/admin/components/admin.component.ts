@@ -2,17 +2,18 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
 import { CatalogService } from '../../catalog/services/catalog.service';
-import { Product } from '../../catalog/models/catalog.model';
+import { CreateProductRequest, Product } from '../../catalog/models/catalog.model';
 import { User } from '../../auth/models/user.model';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { CartService } from '../../cart/services/cart.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ColorsPipe],
+  imports: [CommonModule, CurrencyPipe, ColorsPipe, FormsModule],
   template: `<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold mb-6">Interface d'administration</h1>
 
@@ -32,6 +33,14 @@ import { CartService } from '../../cart/services/cart.service';
         class="px-4 py-2 border border-black rounded"
       >
         Produits
+      </button>
+      <button
+        (click)="activeTab.set('create')"
+        [class.bg-black]="activeTab() === 'create'"
+        [class.text-white]="activeTab() === 'create'"
+        class="px-4 py-2 border border-black rounded"
+      >
+        Créer un produit
       </button>
     </div>
     <!-- Utilisateurs -->
@@ -158,7 +167,105 @@ import { CartService } from '../../cart/services/cart.service';
         </div>
       </div>
     </div>
-  </div> `,
+    <!--ADDProduct-->
+    <div *ngIf="activeTab() === 'create'" class="bg-white p-6">
+      <h2 class="text-xl font-semibold mb-4">Créer un produit</h2>
+      <form
+        #f="ngForm"
+        (ngSubmit)="
+          createProduct({
+            name: form.name.trim(),
+            brand: form.brand.trim(),
+            price: +form.price!,
+            sizes: form.sizes,
+            colors: form.colors,
+            image1: form.image1.trim(),
+            image2: form.image2?.trim() || undefined,
+            description: form.description.trim(),
+          })
+        "
+      >
+        <input
+          name="name"
+          [(ngModel)]="form.name"
+          required
+          minlength="2"
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Nom"
+        />
+        <input
+          name="brand"
+          [(ngModel)]="form.brand"
+          required
+          minlength="2"
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Marque"
+        />
+        <input
+          name="price"
+          type="number"
+          step="0.01"
+          min="0"
+          [(ngModel)]="form.price"
+          required
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Prix (€)"
+        />
+
+        <input
+          name="sizes"
+          [ngModel]="form.sizes.join(', ')"
+          (ngModelChange)="form.sizes = parseSizes($event)"
+          required
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Pointures (ex: 36, 37.5, 38)"
+        />
+
+        <input
+          name="colors"
+          [ngModel]="form.colors.join(', ')"
+          (ngModelChange)="form.colors = parseColors($event)"
+          required
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Couleurs (ex: black, white)"
+        />
+
+        <input
+          name="image1"
+          type="url"
+          [(ngModel)]="form.image1"
+          required
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Image 1 (URL)"
+        />
+        <input
+          name="image2"
+          type="url"
+          [(ngModel)]="form.image2"
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Image 2 (URL, optionnel)"
+        />
+
+        <textarea
+          name="description"
+          rows="4"
+          [(ngModel)]="form.description"
+          required
+          minlength="10"
+          class="w-full border rounded-lg px-3 py-2"
+          placeholder="Description"
+        ></textarea>
+
+        <button
+          type="submit"
+          class="px-4 py-2 rounded-lg text-white bg-black disabled:opacity-50"
+          [disabled]="!f.valid || creating()"
+        >
+          {{ creating() ? 'Création…' : 'Créer' }}
+        </button>
+      </form>
+    </div>
+  </div>`,
 })
 export class AdminComponent implements OnInit {
   private authService = inject(AuthService);
@@ -166,9 +273,21 @@ export class AdminComponent implements OnInit {
   private cartService = inject(CartService);
   private router = inject(Router);
 
-  activeTab = signal<'users' | 'products'>('users');
+  activeTab = signal<'users' | 'products' | 'create'>('users');
   product = signal<Product[]>([]);
   users = signal<User[]>([]);
+  creating = signal(false);
+
+  form = {
+    name: '',
+    brand: '',
+    price: null as number | null,
+    sizes: [] as number[],
+    colors: [] as string[],
+    image1: '',
+    image2: '',
+    description: '',
+  };
 
   async ngOnInit() {
     const currentUser = await this.authService.getCurrentUser();
@@ -177,7 +296,6 @@ export class AdminComponent implements OnInit {
       return;
     }
 
-    // Charger les données
     await this.loadUsers();
     await this.loadProducts();
   }
@@ -222,7 +340,43 @@ export class AdminComponent implements OnInit {
       }
     }
   }
+
   getColors(colors: string[]): string {
     return colors.map((color) => new ColorsPipe().transform(color)).join(', ');
+  }
+
+  parseSizes(input: string): number[] {
+    return input
+      .split(',')
+      .map((s) => parseFloat(s.replace(',', '.').trim()))
+      .filter((n) => !Number.isNaN(n));
+  }
+  parseColors(input: string): string[] {
+    return input
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+  }
+
+  async createProduct(data: CreateProductRequest): Promise<Product> {
+    this.creating.set(true);
+    try {
+      const created = await this.catalogService.createProduct(data);
+      await this.loadProducts();
+      this.form = {
+        name: '',
+        brand: '',
+        price: null,
+        sizes: [],
+        colors: [],
+        image1: '',
+        image2: '',
+        description: '',
+      };
+      this.activeTab.set('products');
+      return created;
+    } finally {
+      this.creating.set(false);
+    }
   }
 }
