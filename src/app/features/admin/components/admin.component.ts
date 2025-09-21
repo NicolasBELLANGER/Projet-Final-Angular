@@ -34,10 +34,9 @@ const parseSizesCsv = (csv: string): number[] =>
 const parseColorsCsv = (csv: string): string[] =>
   (csv ?? '')
     .split(/[,\s;]+/)
-    .map(c => c.trim())
+    .map((c) => c.trim())
     .filter(Boolean)
-    .map(c => c.charAt(0).toLocaleUpperCase('fr-FR') + c.slice(1).toLocaleLowerCase('fr-FR'));
-
+    .map((c) => c.charAt(0).toLocaleUpperCase('fr-FR') + c.slice(1).toLocaleLowerCase('fr-FR'));
 
 @Component({
   selector: 'app-admin',
@@ -205,11 +204,17 @@ const parseColorsCsv = (csv: string): string[] =>
           placeholder="Nom"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('name')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('name') }}</p>
+        }
         <input
           formControlName="brand"
           placeholder="Marque"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('brand')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('brand') }}</p>
+        }
 
         <input
           type="number"
@@ -219,18 +224,27 @@ const parseColorsCsv = (csv: string): string[] =>
           placeholder="Prix (€)"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('price')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('price') }}</p>
+        }
 
         <input
           formControlName="sizesCsv"
           placeholder="Pointures (ex: 36, 37.5, 38)"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('sizesCsv')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('sizesCsv') }}</p>
+        }
 
         <input
           formControlName="colorsCsv"
           placeholder="Couleurs (ex: black, white)"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('brand')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('colorsCsv') }}</p>
+        }
 
         <input
           type="url"
@@ -238,6 +252,9 @@ const parseColorsCsv = (csv: string): string[] =>
           placeholder="Image 1 (URL)"
           class="w-full border rounded-lg px-3 py-2"
         />
+        @if (isFieldInvalid('brand')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('image1') }}</p>
+        }
 
         <input
           type="url"
@@ -252,6 +269,9 @@ const parseColorsCsv = (csv: string): string[] =>
           placeholder="Description"
           class="w-full border rounded-lg px-3 py-2"
         ></textarea>
+        @if (isFieldInvalid('brand')) {
+          <p class="mt-1 text-sm text-red-600">{{ getFieldError('description') }}</p>
+        }
 
         <button
           type="submit"
@@ -375,6 +395,22 @@ export class AdminComponent implements OnInit {
     } finally {
       this.creating.set(false);
     }
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const c = this.createForm.get(fieldName);
+    return !!(c && c.invalid && (c.dirty || c.touched));
+  }
+
+  getFieldError(fieldName: string): string {
+    const c = this.createForm.get(fieldName);
+    if (!c || !c.errors) return '';
+
+    if (c.errors['required']) return 'Ce champ est requis.';
+    if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} caractères.`;
+    if (c.errors['min']) return `La valeur doit être ≥ ${c.errors['min'].min}.`;
+    if (c.errors['csvHasNumber']) return 'Indique au moins une pointure valide.';
+    return 'Valeur invalide.';
   }
 
   getColors(colors: string[]): string {
