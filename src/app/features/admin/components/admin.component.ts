@@ -8,12 +8,41 @@ import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { CartService } from '../../cart/services/cart.service';
-import { FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
+
+const csvHasNumber: ValidatorFn = (ctrl: AbstractControl): ValidationErrors | null =>
+  String(ctrl.value ?? '')
+    .split(/[,\s;]+/)
+    .map((s) => parseFloat(s.replace(',', '.').trim()))
+    .some((n) => Number.isFinite(n))
+    ? null
+    : { csvHasNumber: true };
+
+const parseSizesCsv = (csv: string): number[] =>
+  (csv ?? '')
+    .split(/[,\s;]+/)
+    .map((s) => parseFloat(s.replace(',', '.').trim()))
+    .filter((n) => Number.isFinite(n));
+
+const parseColorsCsv = (csv: string): string[] =>
+  (csv ?? '')
+    .split(/[,\s;]+/)
+    .map(c => c.trim())
+    .filter(Boolean)
+    .map(c => c.charAt(0).toLocaleUpperCase('fr-FR') + c.slice(1).toLocaleLowerCase('fr-FR'));
+
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ColorsPipe, FormsModule],
+  imports: [CommonModule, CurrencyPipe, ColorsPipe, ReactiveFormsModule],
   template: `<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold mb-6">Interface d'administration</h1>
 
@@ -170,99 +199,76 @@ import { FormsModule } from '@angular/forms';
     <!--ADDProduct-->
     <div *ngIf="activeTab() === 'create'" class="bg-white p-6">
       <h2 class="text-xl font-semibold mb-4">Créer un produit</h2>
-      <form
-        #f="ngForm"
-        (ngSubmit)="
-          createProduct({
-            name: form.name.trim(),
-            brand: form.brand.trim(),
-            price: +form.price!,
-            sizes: form.sizes,
-            colors: form.colors,
-            image1: form.image1.trim(),
-            image2: form.image2?.trim() || undefined,
-            description: form.description.trim(),
-          })
-        "
-      >
+      <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="space-y-4">
         <input
-          name="name"
-          [(ngModel)]="form.name"
-          required
-          minlength="2"
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="name"
           placeholder="Nom"
-        />
-        <input
-          name="brand"
-          [(ngModel)]="form.brand"
-          required
-          minlength="2"
           class="w-full border rounded-lg px-3 py-2"
-          placeholder="Marque"
         />
         <input
-          name="price"
+          formControlName="brand"
+          placeholder="Marque"
+          class="w-full border rounded-lg px-3 py-2"
+        />
+
+        <input
           type="number"
           step="0.01"
           min="0"
-          [(ngModel)]="form.price"
-          required
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="price"
           placeholder="Prix (€)"
+          class="w-full border rounded-lg px-3 py-2"
         />
 
         <input
-          name="sizes"
-          [ngModel]="form.sizes.join(', ')"
-          (ngModelChange)="form.sizes = parseSizes($event)"
-          required
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="sizesCsv"
           placeholder="Pointures (ex: 36, 37.5, 38)"
+          class="w-full border rounded-lg px-3 py-2"
         />
 
         <input
-          name="colors"
-          [ngModel]="form.colors.join(', ')"
-          (ngModelChange)="form.colors = parseColors($event)"
-          required
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="colorsCsv"
           placeholder="Couleurs (ex: black, white)"
+          class="w-full border rounded-lg px-3 py-2"
         />
 
         <input
-          name="image1"
           type="url"
-          [(ngModel)]="form.image1"
-          required
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="image1"
           placeholder="Image 1 (URL)"
-        />
-        <input
-          name="image2"
-          type="url"
-          [(ngModel)]="form.image2"
           class="w-full border rounded-lg px-3 py-2"
+        />
+
+        <input
+          type="url"
+          formControlName="image2"
           placeholder="Image 2 (URL, optionnel)"
+          class="w-full border rounded-lg px-3 py-2"
         />
 
         <textarea
-          name="description"
           rows="4"
-          [(ngModel)]="form.description"
-          required
-          minlength="10"
-          class="w-full border rounded-lg px-3 py-2"
+          formControlName="description"
           placeholder="Description"
+          class="w-full border rounded-lg px-3 py-2"
         ></textarea>
 
         <button
           type="submit"
           class="px-4 py-2 rounded-lg text-white bg-black disabled:opacity-50"
-          [disabled]="!f.valid || creating()"
+          [disabled]="createForm.invalid || creating()"
         >
           {{ creating() ? 'Création…' : 'Créer' }}
         </button>
+        <p
+          class="text-sm text-red-600 mt-1"
+          *ngIf="
+            createForm.controls.sizesCsv.touched &&
+            createForm.controls.sizesCsv.hasError('csvHasNumber')
+          "
+        >
+          Indique au moins une pointure valide.
+        </p>
       </form>
     </div>
   </div>`,
@@ -272,22 +278,25 @@ export class AdminComponent implements OnInit {
   private catalogService = inject(CatalogService);
   private cartService = inject(CartService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
+
+  createForm = this.fb.nonNullable.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    brand: ['', [Validators.required, Validators.minLength(2)]],
+    price: this.fb.control<number | null>(null, {
+      validators: [Validators.required, Validators.min(0)],
+    }),
+    sizesCsv: ['', [Validators.required, csvHasNumber]],
+    colorsCsv: ['', [Validators.required]],
+    image1: ['', [Validators.required]],
+    image2: this.fb.control<string | null>(null),
+    description: ['', [Validators.required, Validators.minLength(10)]],
+  });
 
   activeTab = signal<'users' | 'products' | 'create'>('users');
   product = signal<Product[]>([]);
   users = signal<User[]>([]);
   creating = signal(false);
-
-  form = {
-    name: '',
-    brand: '',
-    price: null as number | null,
-    sizes: [] as number[],
-    colors: [] as string[],
-    image1: '',
-    image2: '',
-    description: '',
-  };
 
   async ngOnInit() {
     const currentUser = await this.authService.getCurrentUser();
@@ -341,42 +350,34 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  getColors(colors: string[]): string {
-    return colors.map((color) => new ColorsPipe().transform(color)).join(', ');
-  }
-
-  parseSizes(input: string): number[] {
-    return input
-      .split(',')
-      .map((s) => parseFloat(s.replace(',', '.').trim()))
-      .filter((n) => !Number.isNaN(n));
-  }
-  parseColors(input: string): string[] {
-    return input
-      .split(',')
-      .map((c) => c.trim())
-      .filter(Boolean);
-  }
-
-  async createProduct(data: CreateProductRequest): Promise<Product> {
+  async onCreate(): Promise<void> {
+    if (this.createForm.invalid) {
+      this.createForm.markAllAsTouched();
+      return;
+    }
     this.creating.set(true);
     try {
-      const created = await this.catalogService.createProduct(data);
-      await this.loadProducts();
-      this.form = {
-        name: '',
-        brand: '',
-        price: null,
-        sizes: [],
-        colors: [],
-        image1: '',
-        image2: '',
-        description: '',
+      const v = this.createForm.getRawValue();
+      const payload: CreateProductRequest = {
+        name: v.name.trim(),
+        brand: v.brand.trim(),
+        price: Number(v.price),
+        sizes: parseSizesCsv(v.sizesCsv),
+        colors: parseColorsCsv(v.colorsCsv),
+        image1: v.image1.trim(),
+        image2: v.image2?.trim() || undefined,
+        description: v.description.trim(),
       };
+      await this.catalogService.createProduct(payload);
+      await this.loadProducts();
+      this.createForm.reset();
       this.activeTab.set('products');
-      return created;
     } finally {
       this.creating.set(false);
     }
+  }
+
+  getColors(colors: string[]): string {
+    return colors.map((color) => new ColorsPipe().transform(color)).join(', ');
   }
 }
