@@ -34,70 +34,129 @@ import { CartService } from '../../cart/services/cart.service';
         Produits
       </button>
     </div>
-
     <!-- Utilisateurs -->
-    <div *ngIf="activeTab() === 'users'" class="bg-white p-6 shadow rounded-lg">
+    <div *ngIf="activeTab() === 'users'" class="bg-white p-6">
       <h2 class="text-xl font-semibold mb-4">Liste des utilisateurs</h2>
-      <table class="w-full table-auto border-collapse">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="text-left px-4 py-2">Prénom</th>
-            <th class="text-left px-4 py-2">Nom</th>
-            <th class="text-left px-4 py-2">Email</th>
-            <th class="text-left px-4 py-2">Rôle</th>
-            <th class="text-left px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users()">
-            <td class="px-4 py-2">{{ user.firstname }}</td>
-            <td class="px-4 py-2">{{ user.lastname }}</td>
-            <td class="px-4 py-2">{{ user.email }}</td>
-            <td class="px-4 py-2 capitalize">{{ user.role }}</td>
-            <td class="px-4 py-2">
-              <button
-                *ngIf="user.role !== 'admin'"
-                (click)="deleteUser(user.id)"
-                class="text-red-600 hover:underline"
-              >
-                Supprimer
-              </button>
-              <span *ngIf="user.role === 'admin'" class="text-gray-500">Admin</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!--MOBILE-->
+      <div class="md:hidden space-y-4">
+        <article *ngFor="let user of users()" class="rounded-lg border p-4 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-semibold text-base">{{ user.firstname }} {{ user.lastname }}</div>
+              <div class="text-sm text-gray-600 break-all">{{ user.email }}</div>
+            </div>
+            <span
+              class="text-xs px-2 py-1 rounded-full border"
+              [class.bg-gray-900]="user.role === 'admin'"
+              [class.text-white]="user.role === 'admin'"
+              >{{ user.role }}</span
+            >
+          </div>
+          <div class="mt-3 flex justify-end">
+            <button
+              *ngIf="user.role !== 'admin'"
+              (click)="deleteUser(user.id)"
+              class="text-red-600 text-sm font-medium hover:underline active:scale-95"
+              aria-label="Supprimer l'utilisateur"
+            >
+              Supprimer
+            </button>
+            <span *ngIf="user.role === 'admin'" class="text-gray-500 text-sm">Admin</span>
+          </div>
+        </article>
+      </div>
+      <!--DESKTOP-->
+      <div class="hidden md:block">
+        <div class="overflow-x-auto -mx-4 md:mx-0">
+          <table class="w-full table-auto border-collapse">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="text-left px-4 py-2">Prénom</th>
+                <th class="text-left px-4 py-2">Nom</th>
+                <th class="text-left px-4 py-2">Email</th>
+                <th class="text-left px-4 py-2">Rôle</th>
+                <th class="text-left px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users()">
+                <td class="px-4 py-2">{{ user.firstname }}</td>
+                <td class="px-4 py-2">{{ user.lastname }}</td>
+                <td class="px-4 py-2">{{ user.email }}</td>
+                <td class="px-4 py-2 capitalize">{{ user.role }}</td>
+                <td class="px-4 py-2">
+                  <button
+                    *ngIf="user.role !== 'admin'"
+                    (click)="deleteUser(user.id)"
+                    class="text-red-600 hover:underline"
+                  >
+                    Supprimer
+                  </button>
+                  <span *ngIf="user.role === 'admin'" class="text-gray-500">Admin</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-
     <!-- Produits -->
-    <div *ngIf="activeTab() === 'products'" class="bg-white p-6 shadow rounded-lg mt-8">
+    <div *ngIf="activeTab() === 'products'" class="bg-white p-6 mt-8">
       <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
-      <table class="w-full table-auto border-collapse">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="text-left px-4 py-2">Nom</th>
-            <th class="text-left px-4 py-2">Marque</th>
-            <th class="text-left px-4 py-2">Prix</th>
-            <th class="text-left px-4 py-2">Pointures</th>
-            <th class="text-left px-4 py-2">Couleurs</th>
-            <th class="text-left px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let p of product()">
-            <td class="px-4 py-2">{{ p.name }}</td>
-            <td class="px-4 py-2">{{ p.brand }}</td>
-            <td class="px-4 py-2">{{ p.price | currency: 'EUR' }}</td>
-            <td class="px-4 py-2">{{ p.sizes.join(', ') }}</td>
-            <td class="px-4 py-2">{{ getColors(p.colors) }}</td>
-            <td class="px-4 py-2">
-              <button (click)="deleteProducts(p.id)" class="text-red-600 hover:underline">
-                Supprimer
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!--MOBILE-->
+      <div class="md:hidden space-y-4">
+        <article *ngFor="let p of product()" class="rounded-lg border p-4 shadow-sm">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-semibold">{{ p.name }}</div>
+              <div class="text-sm text-gray-600">Marque : {{ p.brand }}</div>
+              <div class="mt-1 text-sm">
+                Prix : <span class="font-medium">{{ p.price | currency: 'EUR' }}</span>
+              </div>
+              <div class="text-sm text-gray-700">Pointures : {{ p.sizes.join(', ') }}</div>
+              <div class="text-sm text-gray-700">Couleurs : {{ getColors(p.colors) }}</div>
+            </div>
+            <button
+              (click)="deleteProducts(p.id)"
+              class="text-red-600 text-sm font-medium hover:underline active:scale-95"
+              aria-label="Supprimer le produit"
+            >
+              Supprimer
+            </button>
+          </div>
+        </article>
+      </div>
+      <!--DESKTOP-->
+      <div class="hidden md:block bg-white p-4 md:p-6">
+        <div class="overflow-x-auto -mx-4 md:mx-0">
+          <table class="w-full table-auto border-collapse">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="text-left px-4 py-2">Nom</th>
+                <th class="text-left px-4 py-2">Marque</th>
+                <th class="text-left px-4 py-2">Prix</th>
+                <th class="text-left px-4 py-2">Pointures</th>
+                <th class="text-left px-4 py-2">Couleurs</th>
+                <th class="text-left px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of product()">
+                <td class="px-4 py-2">{{ p.name }}</td>
+                <td class="px-4 py-2">{{ p.brand }}</td>
+                <td class="px-4 py-2">{{ p.price | currency: 'EUR' }}</td>
+                <td class="px-4 py-2">{{ p.sizes.join(', ') }}</td>
+                <td class="px-4 py-2">{{ getColors(p.colors) }}</td>
+                <td class="px-4 py-2">
+                  <button (click)="deleteProducts(p.id)" class="text-red-600 hover:underline">
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div> `,
 })
