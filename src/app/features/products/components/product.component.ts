@@ -38,14 +38,14 @@ import { AuthService } from '../../auth/services/auth.service';
               class="w-48 border px-3 py-2 text-sm bg-white"
               [(ngModel)]="selectedSize"
             >
-              @for (s of product?.sizes; track s) {
+              @for(s of product?.sizes; track s) {
                 <option [value]="s">{{ s }}</option>
               }
             </select>
           </div>
 
           <div class="flex gap-2 mt-4">
-            @for (c of product?.colors; let i = $index; track c) {
+            @for(c of product?.colors; let i = $index; track c) {
               <button
                 class="w-6 h-6 rounded-full border"
                 [style.backgroundColor]="c | colorHex"
@@ -65,7 +65,7 @@ import { AuthService } from '../../auth/services/auth.service';
             >
               Ajouter au panier
             </button>
-            @if (!currentUser()) {
+            @if(!currentUser()) {
               <div class="text-red-500 text-sm mt-2">
                 Vous devez être connecté pour ajouter un produit au panier.
               </div>

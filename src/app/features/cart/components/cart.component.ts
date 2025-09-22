@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { CartService } from '../services/cart.service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Product } from '../../catalog/models/catalog.model';
@@ -16,9 +16,9 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
         <ng-container>
           <!--MOBILE-->
           <div class="md:hidden space-y-4">
-            @for (item of cartItems(); track item) {
+            @for (item of cartItems(); track item.productId) {
               <div class="rounded-lg border p-4 flex gap-4">
-                @if (getProduct(item.productId); as product) {
+                @if (getProduct(item.productId)) {
                   <ng-container>
                     <img
                       [src]="item.imageUrl"
@@ -83,7 +83,7 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
                   </tr>
                 </thead>
                 <tbody>
-                  @for (item of cartItems(); track item) {
+                  @for (item of cartItems(); track item.productId) {
                     <tr class="border-b">
                       @if (getProduct(item.productId); as product) {
                         <ng-container>
@@ -140,11 +140,9 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
             </p>
           </div>
         </ng-container>
-      }
-      else(emptyCart)
-      <ng-template #emptyCart>
+      } @else {
         <p>Votre panier est vide.</p>
-      </ng-template>
+      }
     </section>
   `,
 })
@@ -159,21 +157,20 @@ export class CartComponent implements OnInit {
   products = new Map<number, Product>();
 
   async ngOnInit() {
-    const items = this.cartItems();
-    for (const item of items) {
-      const product = await this.catalog.getProductById(item.productId);
-      if (product) {
-        this.products.set(item.productId, product);
+    effect(async () => {
+      for (const item of this.cartItems()) {
+        if (!this.products.has(item.productId)) {
+          const product = await this.catalog.getProductById(item.productId);
+          if (product) {
+            this.products.set(item.productId, product);
+          }
+        }
       }
-    }
+    });
   }
 
   getProduct(productId: number): Product | undefined {
     return this.products.get(productId);
-  }
-
-  trackByProductId(index: number, item: { productId: number }) {
-    return item.productId;
   }
 
   async removeOne(productId: number) {

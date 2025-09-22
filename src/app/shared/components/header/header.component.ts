@@ -51,14 +51,12 @@ import { CartService } from '../../../features/cart/services/cart.service';
               </button>
             </ng-container>
           } @else {
-            <ng-template>
               <a routerLink="/auth/login" class="text-sm font-semibold hover:opacity-70"
                 >Se connecter</a
               >
               <a routerLink="/auth/register" class="text-sm font-semibold hover:opacity-70"
                 >S'inscrire</a
               >
-            </ng-template>
           }
         </div>
       </div>
