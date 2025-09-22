@@ -52,27 +52,28 @@ import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive
         <fieldset>
           <legend class="text-sm font-medium mb-2">Marques</legend>
           <div class="flex flex-wrap gap-3">
-            <ng-container *ngFor="let b of brands(); let i = index; trackBy: trackByStr">
-              <input
-                type="checkbox"
-                class="size-4"
-                [id]="'brand-' + i"
-                [checked]="selectedBrands().includes(b)"
-                (change)="toggleBrand(b)"
-              />
-              <label
-                class="inline-flex items-center gap-2 cursor-pointer"
-                [attr.for]="'brand-' + i"
-              >
-                <span class="text-sm">{{ b }}</span>
-              </label>
-            </ng-container>
+            @for (b of brands(); track b; let i = $index) {
+              <div class="inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  class="size-4"
+                  [id]="'brand-' + i"
+                  [checked]="selectedBrands().includes(b)"
+                  (change)="toggleBrand(b)"
+                />
+                <label class="cursor-pointer text-sm" [attr.for]="'brand-' + i">
+                  {{ b }}
+                </label>
+              </div>
+            } @empty {
+              <span class="text-sm text-neutral-500">Aucune marque disponible</span>
+            }
           </div>
         </fieldset>
         <fieldset>
           <legend class="text-sm font-medium mb-2">Couleurs</legend>
           <div class="flex flex-wrap gap-3">
-            <ng-container *ngFor="let c of colors(); let i = index; trackBy: trackByStr">
+            @for (c of colors(); track c; let i = $index) {
               <input
                 type="checkbox"
                 class="size-4"
@@ -86,7 +87,9 @@ import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive
               >
                 <span class="text-sm">{{ c | colors }}</span>
               </label>
-            </ng-container>
+            } @empty {
+              <span class="text-sm text-neutral-500">Aucune couleurs disponibles</span>
+            }
           </div>
         </fieldset>
       </div>
@@ -94,26 +97,29 @@ import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive
         {{ visibleProducts().length }} / {{ totalProducts() }} produits affichés
       </p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-6xl">
-        <a
-          *ngFor="let p of visibleProducts(); trackBy: trackById"
-          [routerLink]="['/product', p.id]"
-          class="group block focus:outline-none focus:ring-2 focus:ring-black"
-        >
-          <div class="bg-neutral-100 aspect-[4/3] overflow-hidden">
-            <img
-              [src]="p.image1"
-              [alt]="p.name"
-              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              loading="lazy"
-            />
-          </div>
-          <h2
-            class="mt-3 text-base font-semibold tracking-tight group-hover:underline underline-offset-4"
+        @for (p of visibleProducts(); track p) {
+          <a
+            [routerLink]="['/product', p.id]"
+            class="group block focus:outline-none focus:ring-2 focus:ring-black"
           >
-            {{ p.name }}
-          </h2>
-          <div class="text-lg font-bold" [appLowPrice]="p.price">{{ p.price | currency: 'EUR' }}</div>
-        </a>
+            <div class="bg-neutral-100 aspect-[4/3] overflow-hidden">
+              <img
+                [src]="p.image1"
+                [alt]="p.name"
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                loading="lazy"
+              />
+            </div>
+            <h2
+              class="mt-3 text-base font-semibold tracking-tight group-hover:underline underline-offset-4"
+            >
+              {{ p.name }}
+            </h2>
+            <div class="text-lg font-bold" [appLowPrice]="p.price">
+              {{ p.price | currency: 'EUR' }}
+            </div>
+          </a>
+        }
       </div>
     </section>
   `,
@@ -195,7 +201,4 @@ export class CatalogComponent {
       return okPrice && okBrand && okColor;
     });
   });
-
-  trackById = (_: number, p: Product) => p.id;
-  trackByStr = (_: number, s: string) => s;
 }

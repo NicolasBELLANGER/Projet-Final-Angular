@@ -11,125 +11,141 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
   imports: [CommonModule, CurrencyPipe, ColorsPipe],
   template: `
     <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10">
-  <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Votre Panier</h1>
-
-  <ng-container *ngIf="cartItems().length; else emptyCart">
-    <!--MOBILE-->
-    <div class="md:hidden space-y-4">
-      <div
-        *ngFor="let item of cartItems(); trackBy: trackByProductId"
-        class="rounded-lg border p-4 flex gap-4"
-      >
-        <ng-container *ngIf="getProduct(item.productId) as product">
-          <img
-            [src]="item.imageUrl"
-            [alt]="item.name"
-            loading="lazy"
-            class="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover flex-shrink-0"
-          />
-          <div class="flex-1">
-            <div class="font-semibold">{{ item.name }}</div>
-            <div class="text-sm text-gray-600">
-              Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
-            </div>
-
-            <div class="mt-2 flex items-center justify-between">
-              <div class="text-sm font-medium">
-                {{ item.price | currency:'EUR' }}
-              </div>
-
-              <div class="flex items-center gap-2">
-                <button
-                  (click)="removeOne(item.productId)"
-                  class="h-9 w-9 rounded-full bg-red-500 text-white grid place-items-center active:scale-95"
-                  aria-label="Diminuer la quantité"
-                >−</button>
-
-                <span class="w-8 text-center">{{ item.quantity }}</span>
-
-                <button
-                  (click)="addOne(item.productId, item.size, item.color)"
-                  class="h-9 w-9 rounded-full bg-green-600 text-white grid place-items-center active:scale-95"
-                  aria-label="Augmenter la quantité"
-                >+</button>
-              </div>
-            </div>
-
-            <div class="mt-1 text-right text-sm font-semibold">
-              Total : {{ item.price * item.quantity | currency:'EUR' }}
-            </div>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-    <!--DESKTOP-->
-    <div class="hidden md:block">
-      <div class="overflow-x-auto -mx-4 md:mx-0">
-        <table class="min-w-[800px] w-full border-collapse mb-6">
-          <thead>
-            <tr class="border-b">
-              <th class="text-left py-2 px-4">Produit</th>
-              <th class="text-left py-2 px-4">Prix</th>
-              <th class="text-left py-2 px-4">Quantité</th>
-              <th class="text-left py-2 px-4">Total</th>
-              <th class="text-left py-2 px-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of cartItems(); trackBy: trackByProductId" class="border-b">
-              <ng-container *ngIf="getProduct(item.productId) as product">
-                <td class="py-3 px-4">
-                  <div class="flex items-center gap-4">
+      <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Votre Panier</h1>
+      @if (cartItems().length) {
+        <ng-container>
+          <!--MOBILE-->
+          <div class="md:hidden space-y-4">
+            @for (item of cartItems(); track item) {
+              <div class="rounded-lg border p-4 flex gap-4">
+                @if (getProduct(item.productId); as product) {
+                  <ng-container>
                     <img
                       [src]="item.imageUrl"
                       [alt]="item.name"
                       loading="lazy"
-                      class="w-16 h-16 rounded object-cover"
+                      class="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover flex-shrink-0"
                     />
-                    <div>
+                    <div class="flex-1">
                       <div class="font-semibold">{{ item.name }}</div>
                       <div class="text-sm text-gray-600">
                         Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
                       </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-3 px-4">{{ item.price | currency:'EUR' }}</td>
-                <td class="py-3 px-4">{{ item.quantity }}</td>
-                <td class="py-3 px-4">{{ item.price * item.quantity | currency:'EUR' }}</td>
-                <td class="py-3 px-4">
-                  <div class="flex gap-2">
-                    <button
-                      (click)="removeOne(item.productId)"
-                      class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                    >−</button>
-                    <button
-                      (click)="addOne(item.productId, item.size, item.color)"
-                      class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    >+</button>
-                  </div>
-                </td>
-              </ng-container>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- Totaux -->
-    <div class="mt-6 md:text-right">
-      <p class="text-base md:text-lg font-semibold">
-        Total Articles : {{ totalItems() }}
-      </p>
-      <p class="text-lg md:text-xl font-bold">
-        Total Prix : {{ totalPrice() | currency:'EUR' }}
-      </p>
-    </div>
-  </ng-container>
 
-  <ng-template #emptyCart>
-    <p>Votre panier est vide.</p>
-  </ng-template>
-</section>
+                      <div class="mt-2 flex items-center justify-between">
+                        <div class="text-sm font-medium">
+                          {{ item.price | currency: 'EUR' }}
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                          <button
+                            (click)="removeOne(item.productId)"
+                            class="h-9 w-9 rounded-full bg-red-500 text-white grid place-items-center active:scale-95"
+                            aria-label="Diminuer la quantité"
+                          >
+                            −
+                          </button>
+
+                          <span class="w-8 text-center">{{ item.quantity }}</span>
+
+                          <button
+                            (click)="addOne(item.productId, item.size, item.color)"
+                            class="h-9 w-9 rounded-full bg-green-600 text-white grid place-items-center active:scale-95"
+                            aria-label="Augmenter la quantité"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="mt-1 text-right text-sm font-semibold">
+                        Total : {{ item.price * item.quantity | currency: 'EUR' }}
+                      </div>
+                    </div>
+                  </ng-container>
+                } @else {
+                  <div class="text-red-600">Produit introuvable</div>
+                }
+              </div>
+            }
+          </div>
+          <!--DESKTOP-->
+          <div class="hidden md:block">
+            <div class="overflow-x-auto -mx-4 md:mx-0">
+              <table class="min-w-[800px] w-full border-collapse mb-6">
+                <thead>
+                  <tr class="border-b">
+                    <th class="text-left py-2 px-4">Produit</th>
+                    <th class="text-left py-2 px-4">Prix</th>
+                    <th class="text-left py-2 px-4">Quantité</th>
+                    <th class="text-left py-2 px-4">Total</th>
+                    <th class="text-left py-2 px-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of cartItems(); track item) {
+                    <tr class="border-b">
+                      @if (getProduct(item.productId); as product) {
+                        <ng-container>
+                          <td class="py-3 px-4">
+                            <div class="flex items-center gap-4">
+                              <img
+                                [src]="item.imageUrl"
+                                [alt]="item.name"
+                                loading="lazy"
+                                class="w-16 h-16 rounded object-cover"
+                              />
+                              <div>
+                                <div class="font-semibold">{{ item.name }}</div>
+                                <div class="text-sm text-gray-600">
+                                  Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td class="py-3 px-4">{{ item.price | currency: 'EUR' }}</td>
+                          <td class="py-3 px-4">{{ item.quantity }}</td>
+                          <td class="py-3 px-4">
+                            {{ item.price * item.quantity | currency: 'EUR' }}
+                          </td>
+                          <td class="py-3 px-4">
+                            <div class="flex gap-2">
+                              <button
+                                (click)="removeOne(item.productId)"
+                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                              >
+                                −
+                              </button>
+                              <button
+                                (click)="addOne(item.productId, item.size, item.color)"
+                                class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </td>
+                        </ng-container>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Totaux -->
+          <div class="mt-6 md:text-right">
+            <p class="text-base md:text-lg font-semibold">Total Articles : {{ totalItems() }}</p>
+            <p class="text-lg md:text-xl font-bold">
+              Total Prix : {{ totalPrice() | currency: 'EUR' }}
+            </p>
+          </div>
+        </ng-container>
+      }
+      else(emptyCart)
+      <ng-template #emptyCart>
+        <p>Votre panier est vide.</p>
+      </ng-template>
+    </section>
   `,
 })
 export class CartComponent implements OnInit {

@@ -72,225 +72,241 @@ const parseColorsCsv = (csv: string): string[] =>
       </button>
     </div>
     <!-- Utilisateurs -->
-    <div *ngIf="activeTab() === 'users'" class="bg-white p-6">
-      <h2 class="text-xl font-semibold mb-4">Liste des utilisateurs</h2>
-      <!--MOBILE-->
-      <div class="md:hidden space-y-4">
-        <article *ngFor="let user of users()" class="rounded-lg border p-4 shadow-sm">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <div class="font-semibold text-base">{{ user.firstname }} {{ user.lastname }}</div>
-              <div class="text-sm text-gray-600 break-all">{{ user.email }}</div>
-            </div>
-            <span
-              class="text-xs px-2 py-1 rounded-full border"
-              [class.bg-gray-900]="user.role === 'admin'"
-              [class.text-white]="user.role === 'admin'"
-              >{{ user.role }}</span
-            >
-          </div>
-          <div class="mt-3 flex justify-end">
-            <button
-              *ngIf="user.role !== 'admin'"
-              (click)="deleteUser(user.id)"
-              class="text-red-600 text-sm font-medium hover:underline active:scale-95"
-              aria-label="Supprimer l'utilisateur"
-            >
-              Supprimer
-            </button>
-            <span *ngIf="user.role === 'admin'" class="text-gray-500 text-sm">Admin</span>
-          </div>
-        </article>
-      </div>
-      <!--DESKTOP-->
-      <div class="hidden md:block">
-        <div class="overflow-x-auto -mx-4 md:mx-0">
-          <table class="w-full table-auto border-collapse">
-            <thead>
-              <tr class="bg-gray-100">
-                <th class="text-left px-4 py-2">Prénom</th>
-                <th class="text-left px-4 py-2">Nom</th>
-                <th class="text-left px-4 py-2">Email</th>
-                <th class="text-left px-4 py-2">Rôle</th>
-                <th class="text-left px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let user of users()">
-                <td class="px-4 py-2">{{ user.firstname }}</td>
-                <td class="px-4 py-2">{{ user.lastname }}</td>
-                <td class="px-4 py-2">{{ user.email }}</td>
-                <td class="px-4 py-2 capitalize">{{ user.role }}</td>
-                <td class="px-4 py-2">
+    @if (activeTab() === 'users') {
+      <div class="bg-white p-6">
+        <h2 class="text-xl font-semibold mb-4">Liste des utilisateurs</h2>
+        <!--MOBILE-->
+        <div class="md:hidden space-y-4">
+          @for (user of users(); track user) {
+            <article class="rounded-lg border p-4 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="font-semibold text-base">
+                    {{ user.firstname }} {{ user.lastname }}
+                  </div>
+                  <div class="text-sm text-gray-600 break-all">{{ user.email }}</div>
+                </div>
+                <span
+                  class="text-xs px-2 py-1 rounded-full border"
+                  [class.bg-gray-900]="user.role === 'admin'"
+                  [class.text-white]="user.role === 'admin'"
+                  >{{ user.role }}</span
+                >
+              </div>
+              <div class="mt-3 flex justify-end">
+                @if (user.role !== 'admin') {
                   <button
-                    *ngIf="user.role !== 'admin'"
                     (click)="deleteUser(user.id)"
-                    class="text-red-600 hover:underline"
+                    class="text-red-600 text-sm font-medium hover:underline active:scale-95"
+                    aria-label="Supprimer l'utilisateur"
                   >
                     Supprimer
                   </button>
-                  <span *ngIf="user.role === 'admin'" class="text-gray-500">Admin</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <!-- Produits -->
-    <div *ngIf="activeTab() === 'products'" class="bg-white p-6 mt-8">
-      <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
-      <!--MOBILE-->
-      <div class="md:hidden space-y-4">
-        <article *ngFor="let p of product()" class="rounded-lg border p-4 shadow-sm">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <div class="font-semibold">{{ p.name }}</div>
-              <div class="text-sm text-gray-600">Marque : {{ p.brand }}</div>
-              <div class="mt-1 text-sm">
-                Prix : <span class="font-medium">{{ p.price | currency: 'EUR' }}</span>
+                }
+                @if (user.role === 'admin') {
+                  <span class="text-gray-500 text-sm">Admin</span>
+                }
               </div>
-              <div class="text-sm text-gray-700">Pointures : {{ p.sizes.join(', ') }}</div>
-              <div class="text-sm text-gray-700">Couleurs : {{ getColors(p.colors) }}</div>
-            </div>
-            <button
-              (click)="deleteProducts(p.id)"
-              class="text-red-600 text-sm font-medium hover:underline active:scale-95"
-              aria-label="Supprimer le produit"
-            >
-              Supprimer
-            </button>
+            </article>
+          }
+        </div>
+        <!--DESKTOP-->
+        <div class="hidden md:block">
+          <div class="overflow-x-auto -mx-4 md:mx-0">
+            <table class="w-full table-auto border-collapse">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="text-left px-4 py-2">Prénom</th>
+                  <th class="text-left px-4 py-2">Nom</th>
+                  <th class="text-left px-4 py-2">Email</th>
+                  <th class="text-left px-4 py-2">Rôle</th>
+                  <th class="text-left px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of users(); track user) {
+                  <tr>
+                    <td class="px-4 py-2">{{ user.firstname }}</td>
+                    <td class="px-4 py-2">{{ user.lastname }}</td>
+                    <td class="px-4 py-2">{{ user.email }}</td>
+                    <td class="px-4 py-2 capitalize">{{ user.role }}</td>
+                    <td class="px-4 py-2">
+                      @if (user.role !== 'admin') {
+                        <button (click)="deleteUser(user.id)" class="text-red-600 hover:underline">
+                          Supprimer
+                        </button>
+                      }
+                      @if (user.role === 'admin') {
+                        <span class="text-gray-500">Admin</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
-        </article>
-      </div>
-      <!--DESKTOP-->
-      <div class="hidden md:block bg-white p-4 md:p-6">
-        <div class="overflow-x-auto -mx-4 md:mx-0">
-          <table class="w-full table-auto border-collapse">
-            <thead>
-              <tr class="bg-gray-100">
-                <th class="text-left px-4 py-2">Nom</th>
-                <th class="text-left px-4 py-2">Marque</th>
-                <th class="text-left px-4 py-2">Prix</th>
-                <th class="text-left px-4 py-2">Pointures</th>
-                <th class="text-left px-4 py-2">Couleurs</th>
-                <th class="text-left px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let p of product()">
-                <td class="px-4 py-2">{{ p.name }}</td>
-                <td class="px-4 py-2">{{ p.brand }}</td>
-                <td class="px-4 py-2">{{ p.price | currency: 'EUR' }}</td>
-                <td class="px-4 py-2">{{ p.sizes.join(', ') }}</td>
-                <td class="px-4 py-2">{{ getColors(p.colors) }}</td>
-                <td class="px-4 py-2">
-                  <button (click)="deleteProducts(p.id)" class="text-red-600 hover:underline">
-                    Supprimer
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
-    </div>
+    }
+    <!-- Produits -->
+    @if (activeTab() === 'products') {
+      <div class="bg-white p-6 mt-8">
+        <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
+        <!--MOBILE-->
+        <div class="md:hidden space-y-4">
+          @for (p of product(); track p) {
+            <article class="rounded-lg border p-4 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="font-semibold">{{ p.name }}</div>
+                  <div class="text-sm text-gray-600">Marque : {{ p.brand }}</div>
+                  <div class="mt-1 text-sm">
+                    Prix : <span class="font-medium">{{ p.price | currency: 'EUR' }}</span>
+                  </div>
+                  <div class="text-sm text-gray-700">Pointures : {{ p.sizes.join(', ') }}</div>
+                  <div class="text-sm text-gray-700">Couleurs : {{ getColors(p.colors) }}</div>
+                </div>
+                <button
+                  (click)="deleteProducts(p.id)"
+                  class="text-red-600 text-sm font-medium hover:underline active:scale-95"
+                  aria-label="Supprimer le produit"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+        <!--DESKTOP-->
+        <div class="hidden md:block bg-white p-4 md:p-6">
+          <div class="overflow-x-auto -mx-4 md:mx-0">
+            <table class="w-full table-auto border-collapse">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="text-left px-4 py-2">Nom</th>
+                  <th class="text-left px-4 py-2">Marque</th>
+                  <th class="text-left px-4 py-2">Prix</th>
+                  <th class="text-left px-4 py-2">Pointures</th>
+                  <th class="text-left px-4 py-2">Couleurs</th>
+                  <th class="text-left px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of product(); track p) {
+                  <tr>
+                    <td class="px-4 py-2">{{ p.name }}</td>
+                    <td class="px-4 py-2">{{ p.brand }}</td>
+                    <td class="px-4 py-2">{{ p.price | currency: 'EUR' }}</td>
+                    <td class="px-4 py-2">{{ p.sizes.join(', ') }}</td>
+                    <td class="px-4 py-2">{{ getColors(p.colors) }}</td>
+                    <td class="px-4 py-2">
+                      <button (click)="deleteProducts(p.id)" class="text-red-600 hover:underline">
+                        Supprimer
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
     <!--ADDProduct-->
-    <div *ngIf="activeTab() === 'create'" class="bg-white p-6">
-      <h2 class="text-xl font-semibold mb-4">Créer un produit</h2>
-      <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="space-y-4">
-        <input
-          formControlName="name"
-          placeholder="Nom"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('name')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('name') }}</p>
-        }
-        <input
-          formControlName="brand"
-          placeholder="Marque"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('brand')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('brand') }}</p>
-        }
+    @if (activeTab() === 'create') {
+      <div class="bg-white p-6">
+        <h2 class="text-xl font-semibold mb-4">Créer un produit</h2>
+        <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="space-y-4">
+          <input
+            formControlName="name"
+            placeholder="Nom"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('name')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('name') }}</p>
+          }
+          <input
+            formControlName="brand"
+            placeholder="Marque"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('brand')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('brand') }}</p>
+          }
 
-        <input
-          type="number"
-          step="0.01"
-          min="0"
-          formControlName="price"
-          placeholder="Prix (€)"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('price')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('price') }}</p>
-        }
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            formControlName="price"
+            placeholder="Prix (€)"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('price')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('price') }}</p>
+          }
 
-        <input
-          formControlName="sizesCsv"
-          placeholder="Pointures (ex: 36, 37.5, 38)"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('sizesCsv')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('sizesCsv') }}</p>
-        }
+          <input
+            formControlName="sizesCsv"
+            placeholder="Pointures (ex: 36, 37.5, 38)"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('sizesCsv')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('sizesCsv') }}</p>
+          }
 
-        <input
-          formControlName="colorsCsv"
-          placeholder="Couleurs (ex: black, white)"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('brand')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('colorsCsv') }}</p>
-        }
+          <input
+            formControlName="colorsCsv"
+            placeholder="Couleurs (ex: black, white)"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('brand')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('colorsCsv') }}</p>
+          }
 
-        <input
-          type="url"
-          formControlName="image1"
-          placeholder="Image 1 (URL)"
-          class="w-full border rounded-lg px-3 py-2"
-        />
-        @if (isFieldInvalid('brand')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('image1') }}</p>
-        }
+          <input
+            type="url"
+            formControlName="image1"
+            placeholder="Image 1 (URL)"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+          @if (isFieldInvalid('brand')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('image1') }}</p>
+          }
 
-        <input
-          type="url"
-          formControlName="image2"
-          placeholder="Image 2 (URL, optionnel)"
-          class="w-full border rounded-lg px-3 py-2"
-        />
+          <input
+            type="url"
+            formControlName="image2"
+            placeholder="Image 2 (URL, optionnel)"
+            class="w-full border rounded-lg px-3 py-2"
+          />
 
-        <textarea
-          rows="4"
-          formControlName="description"
-          placeholder="Description"
-          class="w-full border rounded-lg px-3 py-2"
-        ></textarea>
-        @if (isFieldInvalid('brand')) {
-          <p class="mt-1 text-sm text-red-600">{{ getFieldError('description') }}</p>
-        }
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Description"
+            class="w-full border rounded-lg px-3 py-2"
+          ></textarea>
+          @if (isFieldInvalid('brand')) {
+            <p class="mt-1 text-sm text-red-600">{{ getFieldError('description') }}</p>
+          }
 
-        <button
-          type="submit"
-          class="px-4 py-2 rounded-lg text-white bg-black disabled:opacity-50"
-          [disabled]="createForm.invalid || creating()"
-        >
-          {{ creating() ? 'Création…' : 'Créer' }}
-        </button>
-        <p
-          class="text-sm text-red-600 mt-1"
-          *ngIf="
+          <button
+            type="submit"
+            class="px-4 py-2 rounded-lg text-white bg-black disabled:opacity-50"
+            [disabled]="createForm.invalid || creating()"
+          >
+            {{ creating() ? 'Création…' : 'Créer' }}
+          </button>
+          @if (
             createForm.controls.sizesCsv.touched &&
             createForm.controls.sizesCsv.hasError('csvHasNumber')
-          "
-        >
-          Indique au moins une pointure valide.
-        </p>
-      </form>
-    </div>
+          ) {
+            <p class="text-sm text-red-600 mt-1">Indique au moins une pointure valide.</p>
+          }
+        </form>
+      </div>
+    }
   </div>`,
 })
 export class AdminComponent implements OnInit {

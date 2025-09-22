@@ -19,46 +19,47 @@ import { CartService } from '../../../features/cart/services/cart.service';
         <!-- Right -->
         <div class="flex items-center gap-4">
           <!-- Panier -->
-          <button
-            *ngIf="currentUser()"
-            class="relative p-2 rounded-full hover:bg-gray-100"
-            aria-label="Panier"
-            (click)="goCart()"
-          >
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-width="2" d="M6 6h14l-1.5 9H8L6 6Z"></path>
-              <circle cx="9" cy="20" r="1.5"></circle>
-              <circle cx="18" cy="20" r="1.5"></circle>
-            </svg>
-            <span
-              *ngIf="cartCount() > 0"
-              class="absolute -top-1 -right-1 bg-black text-white text-[10px] px-1.5 py-0.5 rounded-full"
+          @if (currentUser()) {
+            <button
+              class="relative p-2 rounded-full hover:bg-gray-100"
+              aria-label="Panier"
+              (click)="goCart()"
             >
-              {{ cartCount() }}
-            </span>
-          </button>
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-width="2" d="M6 6h14l-1.5 9H8L6 6Z"></path>
+                <circle cx="9" cy="20" r="1.5"></circle>
+                <circle cx="18" cy="20" r="1.5"></circle>
+              </svg>
+              @if (cartCount() > 0) {
+                <span
+                  class="absolute -top-1 -right-1 bg-black text-white text-[10px] px-1.5 py-0.5 rounded-full"
+                >
+                  {{ cartCount() }}
+                </span>
+              }
+            </button>
+          }
 
           <!-- Compte / Admin -->
-          <ng-container *ngIf="currentUser() as user; else guest">
-            <a
-              *ngIf="user.role === 'admin'"
-              routerLink="/admin"
-              class="text-sm font-semibold hover:opacity-70"
-            >
-              Admin
-            </a>
-            <button class="text-sm font-semibold hover:opacity-70" (click)="logout()">
-              Déconnexion
-            </button>
-          </ng-container>
-          <ng-template #guest>
-            <a routerLink="/auth/login" class="text-sm font-semibold hover:opacity-70"
-              >Se connecter</a
-            >
-            <a routerLink="/auth/register" class="text-sm font-semibold hover:opacity-70"
-              >S'inscrire</a
-            >
-          </ng-template>
+          @if (currentUser(); as user) {
+            <ng-container>
+              @if (user.role === 'admin') {
+                <a routerLink="/admin" class="text-sm font-semibold hover:opacity-70"> Admin </a>
+              }
+              <button class="text-sm font-semibold hover:opacity-70" (click)="logout()">
+                Déconnexion
+              </button>
+            </ng-container>
+          } @else {
+            <ng-template>
+              <a routerLink="/auth/login" class="text-sm font-semibold hover:opacity-70"
+                >Se connecter</a
+              >
+              <a routerLink="/auth/register" class="text-sm font-semibold hover:opacity-70"
+                >S'inscrire</a
+              >
+            </ng-template>
+          }
         </div>
       </div>
     </header>
