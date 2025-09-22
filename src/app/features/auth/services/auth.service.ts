@@ -116,14 +116,6 @@ export class AuthService {
     }
   }
 
-  // private clearAllUsersData(): void {
-  //   localStorage.removeItem('users');
-  //   localStorage.removeItem('usersPassword');
-  //   localStorage.removeItem('currentUser');
-  //   localStorage.removeItem('authToken');
-  //   this.loadUserFromStorage();
-  // }
-
   getToken(): string | null {
     const user = this.currentUser();
     return user ? `mock-token-${user.id}` : null;

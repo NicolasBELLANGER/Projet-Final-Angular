@@ -77,7 +77,7 @@ const parseColorsCsv = (csv: string): string[] =>
         <h2 class="text-xl font-semibold mb-4">Liste des utilisateurs</h2>
         <!--MOBILE-->
         <div class="md:hidden space-y-4">
-          @for (user of users(); track user) {
+          @for (user of users(); track user.id) {
             <article class="rounded-lg border p-4 shadow-sm">
               <div class="flex items-start justify-between gap-3">
                 <div>
@@ -124,7 +124,7 @@ const parseColorsCsv = (csv: string): string[] =>
                 </tr>
               </thead>
               <tbody>
-                @for (user of users(); track user) {
+                @for (user of users(); track user.id) {
                   <tr>
                     <td class="px-4 py-2">{{ user.firstname }}</td>
                     <td class="px-4 py-2">{{ user.lastname }}</td>
@@ -154,7 +154,7 @@ const parseColorsCsv = (csv: string): string[] =>
         <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
         <!--MOBILE-->
         <div class="md:hidden space-y-4">
-          @for (p of product(); track p) {
+          @for (p of product(); track p.id) {
             <article class="rounded-lg border p-4 shadow-sm">
               <div class="flex items-start justify-between gap-3">
                 <div>
@@ -192,7 +192,7 @@ const parseColorsCsv = (csv: string): string[] =>
                 </tr>
               </thead>
               <tbody>
-                @for (p of product(); track p) {
+                @for (p of product(); track p.id) {
                   <tr>
                     <td class="px-4 py-2">{{ p.name }}</td>
                     <td class="px-4 py-2">{{ p.brand }}</td>
@@ -216,7 +216,7 @@ const parseColorsCsv = (csv: string): string[] =>
     @if (activeTab() === 'create') {
       <div class="bg-white p-6">
         <h2 class="text-xl font-semibold mb-4">Créer un produit</h2>
-        <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="space-y-4">
+        <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <input
             formControlName="name"
             placeholder="Nom"
@@ -260,7 +260,7 @@ const parseColorsCsv = (csv: string): string[] =>
             placeholder="Couleurs (ex: black, white)"
             class="w-full border rounded-lg px-3 py-2"
           />
-          @if (isFieldInvalid('brand')) {
+          @if (isFieldInvalid('colorsCsv')) {
             <p class="mt-1 text-sm text-red-600">{{ getFieldError('colorsCsv') }}</p>
           }
 
@@ -270,7 +270,7 @@ const parseColorsCsv = (csv: string): string[] =>
             placeholder="Image 1 (URL)"
             class="w-full border rounded-lg px-3 py-2"
           />
-          @if (isFieldInvalid('brand')) {
+          @if (isFieldInvalid('image1')) {
             <p class="mt-1 text-sm text-red-600">{{ getFieldError('image1') }}</p>
           }
 
@@ -287,7 +287,7 @@ const parseColorsCsv = (csv: string): string[] =>
             placeholder="Description"
             class="w-full border rounded-lg px-3 py-2"
           ></textarea>
-          @if (isFieldInvalid('brand')) {
+          @if (isFieldInvalid('description')) {
             <p class="mt-1 text-sm text-red-600">{{ getFieldError('description') }}</p>
           }
 
@@ -333,6 +333,7 @@ export class AdminComponent implements OnInit {
   product = signal<Product[]>([]);
   users = signal<User[]>([]);
   creating = signal(false);
+  editing = signal(false);
 
   async ngOnInit() {
     const currentUser = await this.authService.getCurrentUser();
@@ -375,7 +376,7 @@ export class AdminComponent implements OnInit {
   }
 
   async deleteProducts(productId: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
       try {
         await this.catalogService.deleteProduct(productId);
         await this.cartService.deleteFromCart(productId);
@@ -386,7 +387,7 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  async onCreate(): Promise<void> {
+  async onSubmit(): Promise<void> {
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
       return;

@@ -6,9 +6,9 @@ import { CreateProductRequest, Product, UpdateProductRequest } from '../models/c
   providedIn: 'root',
 })
 export class CatalogService {
-  //State privé (modifiable dans le service)
+  //State privé
   private readonly _products = signal<Product[]>(PRODUCTS);
-  //State public (en lecture pour les autres composants)
+  //State public
   readonly products = this._products.asReadonly();
 
   //Computed
@@ -34,20 +34,17 @@ export class CatalogService {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  //GETALL Récuperer tous les produits
   async getAllProducts() {
     await this.delay(300);
     return this._products();
   }
 
-  //GETPRODUCTBYID Récuperer un produit par son ID
   async getProductById(id: number) {
     await this.delay(200);
     const product = this.products().find((product) => product.id === id);
     return product;
   }
 
-  //CREATEPRODUCT Créer un nouveau produit
   async createProduct(productData: CreateProductRequest): Promise<Product> {
     await this.delay(400);
     const newProduct: Product = {
@@ -65,7 +62,6 @@ export class CatalogService {
     return newProduct;
   }
 
-  //UPDATEPRODUCT Mettre à jour un produit existant
   async updateProduct(id: number, updates: Partial<UpdateProductRequest>): Promise<Product | null> {
     await this.delay(300);
 
@@ -83,7 +79,6 @@ export class CatalogService {
     return updatedProduct || null;
   }
 
-  //DELETEPRODUCT Supprimer un produit par son ID
   async deleteProduct(id: number): Promise<boolean> {
     await this.delay(250);
 
