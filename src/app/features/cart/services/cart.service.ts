@@ -1,16 +1,7 @@
 import { effect, Injectable, signal, computed, inject } from '@angular/core';
 import { Product } from '../../catalog/models/catalog.model';
 import { AuthService } from '../../auth/services/auth.service';
-
-export interface CartItem {
-  productId: number;
-  name: string;
-  price: number;
-  size: number;
-  color: string;
-  quantity: number;
-  imageUrl: string;
-}
+import { CartItem } from '../models/cart.models';
 
 @Injectable({
   providedIn: 'root',
