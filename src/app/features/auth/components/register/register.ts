@@ -27,7 +27,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div
-      class="min-h-screen text-black w-fit flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 mx-auto"
+      class="min-h-[70vh] text-black w-fit flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 mx-auto"
     >
       <div class="w-full space-y-8">
         <div>

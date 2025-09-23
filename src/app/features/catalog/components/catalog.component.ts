@@ -6,11 +6,12 @@ import { Product } from '../models/catalog.model';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive';
 import { ColorHexPipe } from '../../../shared/pipes/color-hex.pipe';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule, ColorsPipe, LowPriceDirective, ColorHexPipe],
+  imports: [CommonModule, RouterModule, ColorsPipe, LowPriceDirective, ColorHexPipe, MatIconModule],
   template: `
     <section class="px-6 md:px-8 lg:px-12 py-10">
       <p
@@ -20,80 +21,86 @@ import { ColorHexPipe } from '../../../shared/pipes/color-hex.pipe';
         moment, découvrez une sélection pointue mêlant style, confort et performance. Nike, adidas,
         New Balance, Jordan, ASICS… et bien plus — trouvez la paire qui vous ressemble.
       </p>
-      <div class="mx-auto max-w-6xl mb-8 grid gap-6">
-        <fieldset>
-          <legend class="text-sm font-medium">Prix</legend>
-          <div class="mt-3 flex items-center gap-3">
-            <label class="text-xs text-neutral-600" for="minNumber">Min</label>
-            <input
-              id="minNumber"
-              type="number"
-              inputmode="decimal"
-              class="w-28 border px-2 py-1 text-sm"
-              [min]="priceRange().min"
-              [max]="maxPrice()"
-              step="0.01"
-              [value]="minPrice()"
-              (input)="onMinPriceInput(+$any($event.target).value)"
-            />
-            <label class="text-xs text-neutral-600" for="maxNumber">Max</label>
-            <input
-              id="maxNumber"
-              type="number"
-              inputmode="decimal"
-              class="w-28 border px-2 py-1 text-sm"
-              [min]="minPrice()"
-              [max]="priceRange().max"
-              step="0.01"
-              [value]="maxPrice()"
-              (input)="onMaxPriceInput(+$any($event.target).value)"
-            />
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend class="text-sm font-medium mb-2">Marques</legend>
-          <div class="flex flex-wrap gap-3">
-            @for (b of brands(); track b; let i = $index) {
-              <div class="inline-flex items-center gap-2">
+      <button (click)="toggleBox()" class="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded mb-8 text-base">
+        <mat-icon class="text-base">settings</mat-icon>
+        Filtres
+      </button>
+      @if (showFilter()) {
+        <div class="mx-auto max-w-6xl mb-8 grid gap-6 p-7 bg-[#f4f6f9]">
+          <fieldset>
+            <legend class="text-sm font-medium">Prix</legend>
+            <div class="mt-3 flex items-center gap-3">
+              <label class="text-xs text-neutral-600" for="minNumber">Min</label>
+              <input
+                id="minNumber"
+                type="number"
+                inputmode="decimal"
+                class="w-28 border px-2 py-1 text-sm"
+                [min]="priceRange().min"
+                [max]="maxPrice()"
+                step="0.01"
+                [value]="minPrice()"
+                (input)="onMinPriceInput(+$any($event.target).value)"
+              />
+              <label class="text-xs text-neutral-600" for="maxNumber">Max</label>
+              <input
+                id="maxNumber"
+                type="number"
+                inputmode="decimal"
+                class="w-28 border px-2 py-1 text-sm"
+                [min]="minPrice()"
+                [max]="priceRange().max"
+                step="0.01"
+                [value]="maxPrice()"
+                (input)="onMaxPriceInput(+$any($event.target).value)"
+              />
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="text-sm font-medium mb-2">Marques</legend>
+            <div class="flex flex-wrap gap-3">
+              @for (b of brands(); track b; let i = $index) {
+                <div class="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    class="size-4"
+                    [id]="'brand-' + i"
+                    [checked]="selectedBrands().includes(b)"
+                    (change)="toggleBrand(b)"
+                  />
+                  <label class="cursor-pointer text-sm" [attr.for]="'brand-' + i">
+                    {{ b }}
+                  </label>
+                </div>
+              } @empty {
+                <span class="text-sm text-neutral-500">Aucune marque disponible</span>
+              }
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="text-sm font-medium mb-2">Couleurs</legend>
+            <div class="flex flex-wrap gap-3">
+              @for (c of colors(); track c; let i = $index) {
                 <input
                   type="checkbox"
                   class="size-4"
-                  [id]="'brand-' + i"
-                  [checked]="selectedBrands().includes(b)"
-                  (change)="toggleBrand(b)"
+                  [id]="'color-' + i"
+                  [checked]="selectedColors().includes(c)"
+                  (change)="toggleColor(c)"
                 />
-                <label class="cursor-pointer text-sm" [attr.for]="'brand-' + i">
-                  {{ b }}
+                <label
+                  class="inline-flex items-center gap-2 cursor-pointer"
+                  [attr.for]="'color-' + i"
+                >
+                  <span class="text-sm">{{ c | colors }}</span>
                 </label>
-              </div>
-            } @empty {
-              <span class="text-sm text-neutral-500">Aucune marque disponible</span>
-            }
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend class="text-sm font-medium mb-2">Couleurs</legend>
-          <div class="flex flex-wrap gap-3">
-            @for (c of colors(); track c; let i = $index) {
-              <input
-                type="checkbox"
-                class="size-4"
-                [id]="'color-' + i"
-                [checked]="selectedColors().includes(c)"
-                (change)="toggleColor(c)"
-              />
-              <label
-                class="inline-flex items-center gap-2 cursor-pointer"
-                [attr.for]="'color-' + i"
-              >
-                <span class="text-sm">{{ c | colors }}</span>
-              </label>
-            } @empty {
-              <span class="text-sm text-neutral-500">Aucune couleurs disponibles</span>
-            }
-          </div>
-        </fieldset>
-      </div>
+              } @empty {
+                <span class="text-sm text-neutral-500">Aucune couleurs disponibles</span>
+              }
+            </div>
+          </fieldset>
+        </div>
+      }
       <p class="text-center text-sm text-neutral-600 mb-6">
         {{ visibleProducts().length }} / {{ totalProducts() }} produits affichés
       </p>
@@ -144,6 +151,7 @@ export class CatalogComponent {
   maxPrice = signal(0);
   selectedBrands = signal<string[]>([]);
   selectedColors = signal<string[]>([]);
+  showFilter = signal(false);
 
   constructor() {
     const range = this.priceRange();
@@ -211,4 +219,8 @@ export class CatalogComponent {
       return okPrice && okBrand && okColor;
     });
   });
+
+  toggleBox() {
+    this.showFilter.update((value) => !value);
+  }
 }
