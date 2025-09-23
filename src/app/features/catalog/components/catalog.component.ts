@@ -5,11 +5,12 @@ import { CatalogService } from '../services/catalog.service';
 import { Product } from '../models/catalog.model';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive';
+import { ColorHexPipe } from '../../../shared/pipes/color-hex.pipe';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterModule, ColorsPipe, LowPriceDirective],
+  imports: [CommonModule, RouterModule, ColorsPipe, LowPriceDirective, ColorHexPipe],
   template: `
     <section class="px-6 md:px-8 lg:px-12 py-10">
       <p
@@ -115,6 +116,15 @@ import { LowPriceDirective } from '../../../shared/directives/lowPrice.directive
             >
               {{ p.name }}
             </h2>
+            <div class="mt-1 flex flex-wrap gap-1 items-center min-h-5">
+              @for (c of p.colors; track c) {
+                <span
+                  class="inline-block size-4 rounded-full border"
+                  [style.backgroundColor]="c | colorHex"
+                  [attr.title]="c"
+                ></span>
+              }
+            </div>
             <div class="text-lg font-bold" [appLowPrice]="p.price">
               {{ p.price | currency: 'EUR' }}
             </div>

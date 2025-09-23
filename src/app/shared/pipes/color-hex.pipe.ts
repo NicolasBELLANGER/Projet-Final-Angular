@@ -12,17 +12,17 @@ export class ColorHexPipe implements PipeTransform {
       case 'Blue':
         return '#0000FF';
       case 'Brown':
-        return '#A52A2A';
+        return '#cb8e63ff';
       case 'Green':
-        return '#008000';
+        return '#5eba5eff';
       case 'Grey':
         return '#808080';
       case 'Orange':
-        return '#FFA500';
+        return '#ff7300ff';
       case 'Pink':
         return '#FFC0CB';
       case 'Purple':
-        return '#800080';
+        return '#a85ba8ff';
       case 'Red':
         return '#FF0000';
       case 'White':
