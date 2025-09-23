@@ -9,12 +9,12 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icons/sneaker-2.png",
+      "src": "icons/sneaker-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icons/sneaker.png",
+      "src": "icons/sneaker-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
