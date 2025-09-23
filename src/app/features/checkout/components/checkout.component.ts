@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CartService } from '../../cart/services/cart.service';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { AuthService } from '../../auth/services/auth.service';
@@ -10,7 +10,7 @@ import { AuthService } from '../../auth/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterModule, ColorsPipe],
   template: `
-    <section class="w-full max-w-3/4 min-h-[70vh] mx-auto p-4">
+    <section class="w-full md:w-[60%] max-w-3/4 min-h-[70vh] mx-auto p-4">
       @if (success()) {
         <div class="text-center space-y-4">
           <h2 class="text-xl font-semibold text-green-600">Commande confirmée !</h2>
@@ -31,77 +31,83 @@ import { AuthService } from '../../auth/services/auth.service';
             <p class="text-neutral-600">Connectez‑vous pour voir votre adresse.</p>
           }
         </div>
-          <ul class="space-y-3 mb-6">
-            @for (item of items(); track item) {
-              <li class="flex justify-between items-start">
-                <div class="text-sm">
-                  <div class="font-medium">{{ item.name }}</div>
-                  <div>
-                    Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
-                    {{ item.quantity }}
-                  </div>
-                </div>
-                <div class="font-semibold">
-                  {{ item.price * item.quantity | currency: 'EUR' }}
-                </div>
-              </li>
-            }
-          </ul>
-          <div class="mb-4">
-            <p class="mb-2 text-sm font-medium">Livraison</p>
-            <label class="mr-4 text-sm">
-              <input
-                type="radio"
-                name="ship"
-                [checked]="delivery() === 0"
-                (change)="setDelivery('standard')"
+        <ul class="space-y-3 mb-6">
+          @for (item of items(); track item) {
+            <li class="flex items-center justify-between gap-3">
+              <img
+                [src]="item.imageUrl"
+                [alt]="item.name"
+                class="w-14 h-14 rounded object-cover flex-shrink-0"
+                loading="lazy"
               />
-              Standard (0€)
-            </label>
-            <label class="text-sm">
-              <input
-                type="radio"
-                name="ship"
-                [checked]="delivery() === 9.9"
-                (change)="setDelivery('express')"
-              />
-              Express (+9,90€)
-            </label>
+              <div class="flex-1 text-sm">
+                <div class="font-medium">{{ item.name }}</div>
+                <div>
+                  Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
+                  {{ item.quantity }}
+                </div>
+              </div>
+              <div class="font-semibold text-right">
+                {{ item.price * item.quantity | currency: 'EUR' }}
+              </div>
+            </li>
+          }
+        </ul>
+        <div class="mb-4">
+          <p class="mb-2 text-sm font-medium">Livraison</p>
+          <label class="mr-4 text-sm">
+            <input
+              type="radio"
+              name="ship"
+              [checked]="delivery() === 0"
+              (change)="setDelivery('standard')"
+            />
+            Standard (0€)
+          </label>
+          <label class="text-sm">
+            <input
+              type="radio"
+              name="ship"
+              [checked]="delivery() === 9.9"
+              (change)="setDelivery('express')"
+            />
+            Express (+9,90€)
+          </label>
+        </div>
+        <p class="mt-2 mb-5 text-sm text-gray-600">
+          Livraison estimée : <strong>{{ estimatedDeliveryDate() }}</strong>
+        </p>
+        <div class="text-sm space-y-1 mb-6">
+          <div class="flex justify-between">
+            <span>Sous‑total</span><span>{{ subTotalPrice() | currency: 'EUR' }}</span>
           </div>
-          <p class="mt-2 mb-5 text-sm text-gray-600">
-            Livraison estimée : <strong>{{ estimatedDeliveryDate() }}</strong>
-          </p>
-          <div class="text-sm space-y-1 mb-6">
-            <div class="flex justify-between">
-              <span>Sous‑total</span><span>{{ subTotalPrice() | currency: 'EUR' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Livraison</span><span>{{ delivery() | currency: 'EUR' }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Taxes</span><span>{{ taxes() | currency: 'EUR' }}</span>
-            </div>
-            <div class="flex justify-between border-t pt-2 font-semibold">
-              <span>Total</span><span>{{ totalPrice() | currency: 'EUR' }}</span>
-            </div>
+          <div class="flex justify-between">
+            <span>Livraison</span><span>{{ delivery() | currency: 'EUR' }}</span>
           </div>
-          <button
-            class="px-4 py-2 bg-black text-white rounded"
-            (click)="payment()"
-            [disabled]="processing()"
-          >
-            {{ processing() ? 'Traitement…' : 'Payer' }}
-          </button>
-        }@else {
-          <p class="text-sm text-neutral-600">Votre panier vide.</p>
-        }
+          <div class="flex justify-between">
+            <span>Taxes</span><span>{{ taxes() | currency: 'EUR' }}</span>
+          </div>
+          <div class="flex justify-between border-t pt-2 font-semibold">
+            <span>Total</span><span>{{ totalPrice() | currency: 'EUR' }}</span>
+          </div>
+        </div>
+        <button
+          class="px-4 py-2 bg-black text-white rounded"
+          routerLink="/order"
+          (click)="payment()"
+          [disabled]="processing()"
+        >
+          {{ processing() ? 'Traitement…' : 'Payer' }}
+        </button>
+      } @else {
+        <p class="text-sm text-neutral-600">Votre panier vide.</p>
+      }
     </section>
   `,
 })
 export class CheckoutComponent {
   private users = inject(AuthService);
   private cart = inject(CartService);
-  private router = inject(Router);
 
   user = this.users.currentUser$;
   items = this.cart.cartItems;
@@ -110,7 +116,7 @@ export class CheckoutComponent {
 
   delivery = signal(0);
   processing = signal(false);
-  taxes = computed(() => +(this.subTotalPrice() * 0.2).toFixed(2));
+  taxes = computed(() => +(this.subTotalPrice() * 0.1).toFixed(2));
   totalPrice = computed(() => +(this.subTotalPrice() + this.delivery() + this.taxes()).toFixed(2));
   success = signal(false);
   orderId = signal<string | null>(null);
@@ -170,11 +176,11 @@ export class CheckoutComponent {
     };
     const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
     allOrders.push(order);
-    localStorage.setItem('orders', JSON.stringify(allOrders));
+    localStorage.setItem('allOrders', JSON.stringify(allOrders));
 
     const userOrders = JSON.parse(localStorage.getItem(`userOrders:${user.id}`) || '[]');
     userOrders.push(order);
-    localStorage.setItem(`orders:${user.id}`, JSON.stringify(userOrders));
+    localStorage.setItem(`userOrders:${user.id}`, JSON.stringify(userOrders));
 
     await this.cart.clearCart();
     this.orderId.set(order.id);

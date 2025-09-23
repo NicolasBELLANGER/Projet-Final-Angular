@@ -4,11 +4,12 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Product } from '../../catalog/models/catalog.model';
 import { CatalogService } from '../../catalog/services/catalog.service';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, ColorsPipe],
+  imports: [CommonModule, CurrencyPipe, ColorsPipe, RouterModule],
   template: `
     <section class="px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10">
       <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Votre Panier</h1>
@@ -133,11 +134,20 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
             </div>
           </div>
           <!-- Totaux -->
-          <div class="mt-6 md:text-right">
+          <div class="mt-6 md:text-right flex flex-col items-end">
             <p class="text-base md:text-lg font-semibold">Total Articles : {{ totalItems() }}</p>
             <p class="text-lg md:text-xl font-bold">
               Total Prix : {{ totalPrice() | currency: 'EUR' }}
             </p>
+          </div>
+          <div class="flex justify-end mt-5">
+            <button
+              class="px-4 py-2 bg-black text-white rounded"
+              routerLink="/checkout"
+              type="button"
+            >
+              Passer au paiement
+            </button>
           </div>
         </ng-container>
       } @else {
