@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CartService } from '../services/cart.service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Product } from '../../catalog/models/catalog.model';
@@ -157,16 +157,13 @@ export class CartComponent implements OnInit {
   products = new Map<number, Product>();
 
   async ngOnInit() {
-    effect(async () => {
-      for (const item of this.cartItems()) {
-        if (!this.products.has(item.productId)) {
-          const product = await this.catalog.getProductById(item.productId);
-          if (product) {
-            this.products.set(item.productId, product);
-          }
-        }
+    const items = this.cartItems();
+    for (const item of items) {
+      const product = await this.catalog.getProductById(item.productId);
+      if (product) {
+        this.products.set(item.productId, product);
       }
-    });
+    }
   }
 
   getProduct(productId: number): Product | undefined {
