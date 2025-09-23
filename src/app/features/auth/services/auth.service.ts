@@ -15,6 +15,9 @@ export class AuthService {
       lastname: 'Admin',
       firstname: 'Admin',
       email: 'admin@example.com',
+      address: '3 Avenue de la Plage',
+      city: 'Paris',
+      postcode: '75016',
       role: 'admin',
     },
     {
@@ -22,6 +25,9 @@ export class AuthService {
       lastname: 'User',
       firstname: 'User',
       email: 'user@example.com',
+      address: '3 Avenue de la Montagne',
+      city: 'Paris',
+      postcode: '75016',
       role: 'user',
     },
   ];
@@ -64,6 +70,9 @@ export class AuthService {
       lastname: userData.lastname,
       firstname: userData.firstname,
       email: userData.email,
+      address: userData.address,
+      city: userData.city,
+      postcode: userData.postcode,
       role: 'user',
     };
 

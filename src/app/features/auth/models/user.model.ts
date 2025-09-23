@@ -3,6 +3,9 @@ export interface User {
   lastname: string;
   firstname: string;
   email: string;
+  address: string;
+  city: string;
+  postcode: string;
   role: 'user' | 'admin';
 }
 
@@ -15,6 +18,9 @@ export interface RegisterRequest {
   lastname: string;
   firstname: string;
   email: string;
+  address: string;
+  city: string;
+  postcode: string;
   password: string;
   confirmPassword: string;
 }

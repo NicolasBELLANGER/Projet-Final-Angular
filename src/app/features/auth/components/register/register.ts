@@ -88,6 +88,63 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
             }
           </div>
 
+          <!-- Address -->
+          <div>
+            <label for="address" class="block text-sm font-medium text-gray-700">
+              Adresse postal
+            </label>
+            <input
+              id="address"
+              type="address"
+              formControlName="address"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="isFieldInvalid('address')"
+            />
+            @if (isFieldInvalid('address')) {
+              <p class="mt-1 text-sm text-red-600">
+                {{ getFieldError('address') }}
+              </p>
+            }
+          </div>
+
+          <!-- City -->
+          <div>
+            <label for="city" class="block text-sm font-medium text-gray-700">
+              Ville
+            </label>
+            <input
+              id="city"
+              type="city"
+              formControlName="city"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="isFieldInvalid('city')"
+            />
+            @if (isFieldInvalid('city')) {
+              <p class="mt-1 text-sm text-red-600">
+                {{ getFieldError('city') }}
+              </p>
+            }
+          </div>
+
+          <!-- Code postal -->
+          <div>
+            <label for="postcode" class="block text-sm font-medium text-gray-700">
+              Code postal
+            </label>
+            <input
+              id="postcode"
+              type="postcode"
+              formControlName="postcode"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="isFieldInvalid('postcode')"
+            />
+            @if (isFieldInvalid('postcode')) {
+              <p class="mt-1 text-sm text-red-600">
+                {{ getFieldError('postcode') }}
+              </p>
+            }
+          </div>
+
           <!-- Password -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700">
@@ -170,6 +227,9 @@ export class RegisterComponent {
         lastname: ['', [Validators.required, Validators.minLength(2)]],
         firstname: ['', [Validators.required, Validators.minLength(2)]],
         email: ['', [Validators.required, Validators.email]],
+        address: ['', [Validators.required, Validators.minLength(6)]],
+        city : ['', [Validators.required, Validators.minLength(2), this.noNumbersValidator]],
+        postcode : ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
       },
@@ -202,15 +262,24 @@ export class RegisterComponent {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  getFieldError(fieldName: string): string {
-    const field = this.registerForm.get(fieldName);
-    if (field?.errors) {
-      if (field.errors['required']) return 'Ce champ est requis';
-      if (field.errors['email']) return 'Format email invalide';
-      if (field.errors['minlength'])
-        return `Minimum ${field.errors['minlength'].requiredLength} caractères`;
-      if (field.errors['passwordMismatch']) return 'Les mots de passe ne correspondent pas';
+  noNumbersValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (value && /\d/.test(value)) {
+      return { hasNumbers: true };
     }
-    return '';
+    return null;
   }
+
+  getFieldError(fieldName: string): string {
+  const field = this.registerForm.get(fieldName);
+  if (field?.errors) {
+    if (field.errors['required']) return 'Ce champ est requis';
+    if (field.errors['email']) return 'Format email invalide';
+    if (field.errors['minlength']) return `Minimum ${field.errors['minlength'].requiredLength} caractères`;
+    if (field.errors['pattern']) return 'Format invalide';
+    if (field.errors['hasNumbers']) return 'Ce champ ne doit pas contenir de chiffres';
+    if (field.errors['passwordMismatch']) return 'Les mots de passe ne correspondent pas';
+  }
+  return '';
+}
 }
