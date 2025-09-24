@@ -16,6 +16,8 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
+import { OrdersService } from '../../orders/services/orders.service';
+import { Order } from '../../orders/models/orders.models';
 
 const csvHasNumber: ValidatorFn = (ctrl: AbstractControl): ValidationErrors | null =>
   String(ctrl.value ?? '')
@@ -61,6 +63,14 @@ const parseColorsCsv = (csv: string): string[] =>
         class="px-4 py-2 border border-black rounded"
       >
         Produits
+      </button>
+      <button
+        (click)="activeTab.set('orders')"
+        [class.bg-black]="activeTab() === 'orders'"
+        [class.text-white]="activeTab() === 'orders'"
+        class="px-4 py-2 border border-black rounded"
+      >
+        Commandes
       </button>
       <button
         (click)="activeTab.set('create')"
@@ -212,6 +222,90 @@ const parseColorsCsv = (csv: string): string[] =>
         </div>
       </div>
     }
+    <!-- Commandes -->
+    @if (activeTab() === 'orders') {
+      <div class="bg-white p-6 mt-8">
+        <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
+        <!--MOBILE-->
+        <div class="md:hidden space-y-4">
+          @for (o of order(); track o.id) {
+            <li class="border rounded p-4">
+              <div class="font-semibold mb-1">Commande #{{ o.id }}</div>
+              <div class="text-sm text-gray-600 mb-2">
+                Passée le {{ o.createdAt | date: 'mediumDate' }} — Total :
+                <strong>{{ o.pricing.totalPrice | currency: 'EUR' }}</strong>
+              </div>
+              <div class="text-sm mb-4">
+                Livraison : {{ o.deliveryTo.address }}, {{ o.deliveryTo.postcode }}
+                {{ o.deliveryTo.city }}
+              </div>
+              <ul class="space-y-2 text-sm">
+                @for (item of o.items; track item.productId) {
+                  <li class="flex items-center justify-between gap-3">
+                    <img
+                      [src]="item.imageUrl"
+                      [alt]="item.name"
+                      class="w-14 h-14 rounded object-cover flex-shrink-0"
+                      loading="lazy"
+                    />
+                    <div class="flex-1 text-sm">
+                      <div class="font-medium">{{ item.name }}</div>
+                      <div>
+                        Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
+                        {{ item.quantity }}
+                      </div>
+                    </div>
+                    <div class="font-semibold text-right">
+                      {{ item.price * item.quantity | currency: 'EUR' }}
+                    </div>
+                  </li>
+                }
+              </ul>
+            </li>
+          }
+        </div>
+        <!--DESKTOP-->
+        <div class="hidden md:block bg-white p-4 md:p-6">
+          <div class="overflow-x-auto -mx-4 md:mx-0">
+            @for (o of order(); track o.id) {
+              <li class="border rounded p-4">
+                <div class="font-semibold mb-1">Commande #{{ o.id }}</div>
+                <div class="text-sm text-gray-600 mb-2">
+                  Passée le {{ o.createdAt | date: 'mediumDate' }} — Total :
+                  <strong>{{ o.pricing.totalPrice | currency: 'EUR' }}</strong>
+                </div>
+                <div class="text-sm mb-4">
+                  Livraison : {{ o.deliveryTo.address }}, {{ o.deliveryTo.postcode }}
+                  {{ o.deliveryTo.city }}
+                </div>
+                <ul class="space-y-2 text-sm">
+                  @for (item of o.items; track item.productId) {
+                    <li class="flex items-center justify-between gap-3">
+                      <img
+                        [src]="item.imageUrl"
+                        [alt]="item.name"
+                        class="w-14 h-14 rounded object-cover flex-shrink-0"
+                        loading="lazy"
+                      />
+                      <div class="flex-1 text-sm">
+                        <div class="font-medium">{{ item.name }}</div>
+                        <div>
+                          Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
+                          {{ item.quantity }}
+                        </div>
+                      </div>
+                      <div class="font-semibold text-right">
+                        {{ item.price * item.quantity | currency: 'EUR' }}
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </li>
+            }
+          </div>
+        </div>
+      </div>
+    }
     <!--ADDProduct-->
     @if (activeTab() === 'create') {
       <div class="bg-white p-6">
@@ -313,6 +407,7 @@ export class AdminComponent implements OnInit {
   private authService = inject(AuthService);
   private catalogService = inject(CatalogService);
   private cartService = inject(CartService);
+  private orderService = inject(OrdersService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
@@ -329,9 +424,10 @@ export class AdminComponent implements OnInit {
     description: ['', [Validators.required, Validators.minLength(10)]],
   });
 
-  activeTab = signal<'users' | 'products' | 'create'>('users');
+  activeTab = signal<'users' | 'products' | 'orders' | 'create'>('users');
   product = signal<Product[]>([]);
   users = signal<User[]>([]);
+  order = signal<Order[]>([]);
   creating = signal(false);
   editing = signal(false);
 
@@ -344,24 +440,22 @@ export class AdminComponent implements OnInit {
 
     await this.loadUsers();
     await this.loadProducts();
+    await this.loadOrders();
   }
 
   async loadUsers() {
-    try {
-      const users = await firstValueFrom(this.authService.getAllUsers());
-      this.users.set(users);
-    } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs:', error);
-    }
+    const users = await firstValueFrom(this.authService.getAllUsers());
+    this.users.set(users);
   }
 
   async loadProducts() {
-    try {
-      const products = await this.catalogService.getAllProducts();
-      this.product.set(products);
-    } catch (error) {
-      console.error('Erreur lors du chargement des produits:', error);
-    }
+    const products = await this.catalogService.getAllProducts();
+    this.product.set(products);
+  }
+
+  async loadOrders() {
+    const orders = await this.orderService.getAllOrders();
+    this.order.set(orders);
   }
 
   async deleteUser(userId: number) {

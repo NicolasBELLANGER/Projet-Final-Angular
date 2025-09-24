@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { AuthService } from '../../auth/services/auth.service';
+import { OrdersService } from '../../orders/services/orders.service';
 
 @Component({
   selector: 'app-checkout',
@@ -17,7 +18,7 @@ import { AuthService } from '../../auth/services/auth.service';
           <p class="text-sm">
             ID de commande : <code class="text-gray-700">{{ orderId() }}</code>
           </p>
-          <button routerLink="/order" class="px-4 py-2 bg-black text-white rounded" type="button">
+          <button routerLink="/orders" class="px-4 py-2 bg-black text-white rounded" type="button">
             Voir mes commandes
           </button>
         </div>
@@ -108,6 +109,7 @@ import { AuthService } from '../../auth/services/auth.service';
 export class CheckoutComponent {
   private users = inject(AuthService);
   private cart = inject(CartService);
+  private orders = inject(OrdersService);
 
   user = this.users.currentUser$;
   items = this.cart.cartItems;
@@ -174,13 +176,8 @@ export class CheckoutComponent {
         totalPrice: this.totalPrice(),
       },
     };
-    const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
-    allOrders.push(order);
-    localStorage.setItem('allOrders', JSON.stringify(allOrders));
 
-    const userOrders = JSON.parse(localStorage.getItem(`userOrders:${user.id}`) || '[]');
-    userOrders.push(order);
-    localStorage.setItem(`userOrders:${user.id}`, JSON.stringify(userOrders));
+    this.orders.addOrder(order);
 
     await this.cart.clearCart();
     this.orderId.set(order.id);
