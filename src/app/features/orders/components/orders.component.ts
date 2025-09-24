@@ -61,7 +61,7 @@ export class OrdersComponent implements OnInit {
   private order = inject(OrdersService);
 
   orders: Order[] = [];
-  user = this.auth.currentUser$;
+  user = this.auth._currentUser;
 
   ngOnInit(): void {
     const currentUser = this.user();

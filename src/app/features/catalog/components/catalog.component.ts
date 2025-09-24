@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CatalogService } from '../services/catalog.service';
@@ -21,7 +21,10 @@ import { MatIconModule } from '@angular/material/icon';
         moment, découvrez une sélection pointue mêlant style, confort et performance. Nike, adidas,
         New Balance, Jordan, ASICS… et bien plus — trouvez la paire qui vous ressemble.
       </p>
-      <button (click)="toggleBox()" class="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded mb-8 text-base">
+      <button
+        (click)="toggleBox()"
+        class="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white rounded mb-8 text-base"
+      >
         <mat-icon class="text-base">settings</mat-icon>
         Filtres
       </button>
@@ -154,9 +157,11 @@ export class CatalogComponent {
   showFilter = signal(false);
 
   constructor() {
-    const range = this.priceRange();
-    this.minPrice.set(range.min);
-    this.maxPrice.set(range.max);
+    effect(() => {
+      const range = this.priceRange();
+      this.minPrice.set(range.min);
+      this.maxPrice.set(range.max);
+    });
   }
 
   brands = computed(() => {

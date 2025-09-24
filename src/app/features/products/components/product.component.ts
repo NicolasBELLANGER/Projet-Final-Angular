@@ -82,7 +82,7 @@ export class ProductComponent {
   private readonly cart = inject(CartService);
   private readonly auth = inject(AuthService);
 
-  currentUser = this.auth.currentUser$;
+  currentUser = this.auth._currentUser;
 
   product?: Product;
   selectedSize?: number;

@@ -68,7 +68,7 @@ export class HeaderComponent {
   private router = inject(Router);
   private cartService = inject(CartService);
 
-  currentUser = this.auth.currentUser$;
+  currentUser = this.auth._currentUser;
   cartCount = this.cartService.totalItems;
 
   goCart() {

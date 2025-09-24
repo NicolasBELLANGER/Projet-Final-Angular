@@ -7,7 +7,7 @@ import { User, LoginRequest, RegisterRequest } from '../models/user.model';
 })
 export class AuthService {
   private currentUser = signal<User | null>(null);
-  public readonly currentUser$ = this.currentUser.asReadonly();
+  public readonly _currentUser = this.currentUser.asReadonly();
 
   private defaultUsers: User[] = [
     {

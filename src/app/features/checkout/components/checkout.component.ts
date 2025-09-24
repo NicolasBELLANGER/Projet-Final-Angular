@@ -5,11 +5,13 @@ import { CommonModule } from '@angular/common';
 import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
 import { AuthService } from '../../auth/services/auth.service';
 import { OrdersService } from '../../orders/services/orders.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterModule, ColorsPipe],
+  imports: [CommonModule, RouterModule, ColorsPipe, ReactiveFormsModule],
   template: `
     <section class="w-full md:w-[60%] max-w-3/4 min-h-[70vh] mx-auto p-4">
       @if (success()) {
@@ -92,14 +94,43 @@ import { OrdersService } from '../../orders/services/orders.service';
             <span>Total</span><span>{{ totalPrice() | currency: 'EUR' }}</span>
           </div>
         </div>
-        <button
-          class="px-4 py-2 bg-black text-white rounded"
-          routerLink="/order"
-          (click)="payment()"
-          [disabled]="processing()"
-        >
-          {{ processing() ? 'Traitement…' : 'Payer' }}
-        </button>
+        <div class="mt-4">
+          <button class="px-4 py-2 bg-black text-white rounded" type="button" (click)="toggleBox()">
+            Passer au paiement
+          </button>
+          @if (showPrice()) {
+            <form [formGroup]="cardForm" (ngSubmit)="payment()" class="mt-4 space-y-3">
+              <div>
+                <label for="cardNumber" class="block text-sm mb-1">Numéro de carte</label>
+                <input
+                  id="cardNumber"
+                  formControlName="cardNumber"
+                  class="w-full border rounded px-3 py-2"
+                  inputmode="numeric"
+                  autocomplete="cc-number"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div>
+                <label for="cardName" class="block text-sm mb-1">Nom sur la carte</label>
+                <input id="cardName" formControlName="cardName" class="w-full border rounded px-3 py-2" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label for="expiry" class="block text-sm mb-1">Expiration (MM/AA)</label>
+                  <input id="expiry" formControlName="expiry" class="w-full border rounded px-3 py-2" placeholder="MM/AA" />
+                </div>
+                <div>
+                  <label for="cvc" class="block text-sm mb-1">CVC</label>
+                  <input id="cvc" formControlName="cvc" class="w-full border rounded px-3 py-2" />
+                </div>
+              </div>
+              <button class="px-4 py-2 bg-black text-white rounded" type="submit" [disabled]="processing() || cardForm.invalid">
+                {{ processing() ? 'Traitement…' : 'Payer' }}
+              </button>
+            </form>
+          }
+        </div>
       } @else {
         <p class="text-sm text-neutral-600">Votre panier vide.</p>
       }
@@ -110,8 +141,9 @@ export class CheckoutComponent {
   private users = inject(AuthService);
   private cart = inject(CartService);
   private orders = inject(OrdersService);
+  private fb = inject(FormBuilder);
 
-  user = this.users.currentUser$;
+  user = this.users._currentUser;
   items = this.cart.cartItems;
   totalItems = this.cart.totalItems;
   subTotalPrice = this.cart.totalPrice;
@@ -122,6 +154,33 @@ export class CheckoutComponent {
   totalPrice = computed(() => +(this.subTotalPrice() + this.delivery() + this.taxes()).toFixed(2));
   success = signal(false);
   orderId = signal<string | null>(null);
+
+  showPrice = signal(false);
+  toggleBox() {
+    this.showPrice.update((value) => !value);
+  }
+
+  constructor() {
+    this.cardForm.controls.cardNumber.valueChanges.subscribe((val) => {
+      if (val === null) return;
+      const digits = val.replace(/\D/g, '').slice(0, 16);
+      const grouped = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+      if (grouped !== val) this.cardForm.controls.cardNumber.setValue(grouped, { emitEvent: false });
+    });
+
+    this.cardForm.controls.expiry.valueChanges.subscribe((val) => {
+      if (val === null) return;
+      const digits = val.replace(/\D/g, '').slice(0, 4);
+      const formatted = digits.length <= 2 ? digits : `${digits.slice(0, 2)}/${digits.slice(2)}`;
+      if (formatted !== val) this.cardForm.controls.expiry.setValue(formatted, { emitEvent: false });
+    });
+
+    this.cardForm.controls.cvc.valueChanges.subscribe((val) => {
+      if (val === null) return;
+      const digits = val.replace(/\D/g, '').slice(0, 3);
+      if (digits !== val) this.cardForm.controls.cvc.setValue(digits, { emitEvent: false });
+    });
+  }
 
   estimatedDeliveryDate = computed(() => {
     const now = new Date();
@@ -143,6 +202,12 @@ export class CheckoutComponent {
 
   async payment() {
     if (this.totalItems() === 0) return;
+
+    if (this.showPrice() && this.cardForm.invalid) {
+      this.cardForm.markAllAsTouched();
+      return;
+    }
+
     this.processing.set(true);
 
     const user = this.user();
@@ -184,4 +249,11 @@ export class CheckoutComponent {
     this.success.set(true);
     this.processing.set(false);
   }
+
+  cardForm = this.fb.nonNullable.group({
+    cardNumber: ['', [Validators.required, Validators.pattern(/^(\d{4} ?){3}\d{4}$/)]],
+    cardName: ['', [Validators.required, Validators.minLength(2)]],
+    expiry: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]],
+    cvc: ['', [Validators.required, Validators.pattern(/^\d{3}$/)]],
+  });
 }

@@ -22,7 +22,7 @@ export class CartService {
 
   constructor() {
     effect(() => {
-      const user = this.auth.currentUser$();
+      const user = this.auth._currentUser();
       if (!user) {
         this._cartItems.set([]);
         return;
@@ -32,7 +32,7 @@ export class CartService {
     });
 
     effect(() => {
-      const user = this.auth.currentUser$();
+      const user = this.auth._currentUser();
       if (!user) return;
       localStorage.setItem(this.userCart(user.id), JSON.stringify(this._cartItems()));
     });

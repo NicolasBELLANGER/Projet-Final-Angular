@@ -224,7 +224,7 @@ const parseColorsCsv = (csv: string): string[] =>
     <!-- Commandes -->
     @if (activeTab() === 'orders') {
       <div class="bg-white p-6 mt-8">
-        <h2 class="text-xl font-semibold mb-4">Liste des produits</h2>
+        <h2 class="text-xl font-semibold mb-4">Liste des commandes</h2>
         <!--MOBILE-->
         <div class="md:hidden space-y-4">
           @for (o of order(); track o.id) {
