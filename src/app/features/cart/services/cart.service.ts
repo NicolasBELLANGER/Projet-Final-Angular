@@ -10,6 +10,9 @@ export class CartService {
   private readonly _cartItems = signal<CartItem[]>([]);
   readonly cartItems = this._cartItems.asReadonly();
 
+  private auth = inject(AuthService);
+  private userCart = (userId: number) => `userCart:${userId}`;
+
   readonly totalItems = computed(() =>
     this._cartItems().reduce((total, item) => total + item.quantity, 0),
   );
@@ -17,41 +20,22 @@ export class CartService {
     this._cartItems().reduce((total, item) => total + item.price * item.quantity, 0),
   );
 
-  private readonly _userId = signal<number | null>(null);
-
   constructor() {
-    const auth = inject(AuthService);
-
     effect(() => {
-      const user = auth.currentUser$();
-      this._userId.set(user?.id ?? null);
-      this.loadCartForUser(this._userId());
+      const user = this.auth.currentUser$();
+      if (!user) {
+        this._cartItems.set([]);
+        return;
+      }
+      const raw = localStorage.getItem(this.userCart(user.id));
+      this._cartItems.set(raw ? (JSON.parse(raw) as CartItem[]) : []);
     });
 
     effect(() => {
-      const uid = this._userId();
-      const items = this._cartItems();
-      if (uid === null) return;
-
-      const allCarts = this.getAllCartsFromStorage();
-      allCarts[String(uid)] = items;
-      localStorage.setItem('carts', JSON.stringify(allCarts));
+      const user = this.auth.currentUser$();
+      if (!user) return;
+      localStorage.setItem(this.userCart(user.id), JSON.stringify(this._cartItems()));
     });
-  }
-
-  private getAllCartsFromStorage(): Record<string, CartItem[]> {
-    const saved = localStorage.getItem('carts');
-    return saved ? JSON.parse(saved) : {};
-  }
-
-  private loadCartForUser(userId: number | null) {
-    if (!userId) {
-      this._cartItems.set([]);
-      return;
-    }
-
-    const allCarts = this.getAllCartsFromStorage();
-    this._cartItems.set(allCarts[String(userId)] ?? []);
   }
 
   private delay(ms: number): Promise<void> {
@@ -85,23 +69,30 @@ export class CartService {
     }
   }
 
-  async deleteOneFromCart(productId: number): Promise<void> {
+  async deleteOneFromCart(productId: number, size: number, color: string): Promise<void> {
     await this.delay(200);
     const items = this._cartItems();
-    const index = items.findIndex((item) => item.productId === productId);
+    const index = items.findIndex(
+      (item) => item.productId === productId && item.size === size && item.color === color,
+    );
     if (index > -1) {
       if (items[index].quantity > 1) {
         items[index].quantity -= 1;
         this._cartItems.set([...items]);
       } else {
-        this._cartItems.set(items.filter((item) => item.productId !== productId));
+        items.splice(index, 1);
+        this._cartItems.set([...items]);
       }
     }
   }
 
   async deleteFromCart(productId: number): Promise<void> {
     await this.delay(200);
-    this._cartItems.set(this._cartItems().filter((item) => item.productId !== productId));
+    this._cartItems.set(
+      this._cartItems().filter(
+        (item) => !(item.productId === productId),
+      ),
+    );
   }
 
   async getAllCartItems(): Promise<CartItem[]> {

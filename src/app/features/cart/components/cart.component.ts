@@ -40,7 +40,7 @@ import { RouterModule } from '@angular/router';
 
                         <div class="flex items-center gap-2">
                           <button
-                            (click)="removeOne(item.productId)"
+                            (click)="removeOne(item.productId, item.size, item.color)"
                             class="h-9 w-9 rounded-full bg-red-500 text-white grid place-items-center active:scale-95"
                             aria-label="Diminuer la quantité"
                           >
@@ -112,7 +112,7 @@ import { RouterModule } from '@angular/router';
                           <td class="py-3 px-4">
                             <div class="flex gap-2">
                               <button
-                                (click)="removeOne(item.productId)"
+                                (click)="removeOne(item.productId, item.size, item.color)"
                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                               >
                                 −
@@ -180,8 +180,8 @@ export class CartComponent implements OnInit {
     return this.products.get(productId);
   }
 
-  async removeOne(productId: number) {
-    await this.cart.deleteOneFromCart(productId);
+  async removeOne(productId: number, size: number, color: string) {
+    await this.cart.deleteOneFromCart(productId, size, color);
   }
 
   async addOne(productId: number, size: number, color: string) {

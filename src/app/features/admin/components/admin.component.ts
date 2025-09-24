@@ -431,7 +431,7 @@ export class AdminComponent implements OnInit {
   editing = signal(false);
 
   async ngOnInit() {
-    const currentUser = await this.authService.getCurrentUser();
+    const currentUser = this.authService.getCurrentUser();
     if (!currentUser || currentUser.role !== 'admin') {
       this.router.navigate(['/todos']);
       return;
