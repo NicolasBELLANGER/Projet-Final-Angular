@@ -57,16 +57,16 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
   `,
 })
 export class OrdersComponent implements OnInit {
-  private auth = inject(AuthService);
-  private order = inject(OrdersService);
+  private authService = inject(AuthService);
+  private orderService = inject(OrdersService);
 
   orders: Order[] = [];
-  user = this.auth._currentUser;
+  user = this.authService.currentUser;
 
   ngOnInit(): void {
     const currentUser = this.user();
     if (currentUser) {
-      this.orders = this.order.getAllOrdersByUserId(currentUser.id);
+      this.orders = this.orderService.getAllOrdersByUserId(currentUser.id);
     }
   }
 }

@@ -138,15 +138,15 @@ import { ReactiveFormsModule } from '@angular/forms';
   `,
 })
 export class CheckoutComponent {
-  private users = inject(AuthService);
-  private cart = inject(CartService);
-  private orders = inject(OrdersService);
+  private authService = inject(AuthService);
+  private cartService = inject(CartService);
+  private orderService = inject(OrdersService);
   private fb = inject(FormBuilder);
 
-  user = this.users._currentUser;
-  items = this.cart.cartItems;
-  totalItems = this.cart.totalItems;
-  subTotalPrice = this.cart.totalPrice;
+  user = this.authService.currentUser;
+  items = this.cartService.cartItems;
+  totalItems = this.cartService.totalItems;
+  subTotalPrice = this.cartService.totalPrice;
 
   delivery = signal(0);
   processing = signal(false);
@@ -242,9 +242,9 @@ export class CheckoutComponent {
       },
     };
 
-    this.orders.addOrder(order);
+    this.orderService.addOrder(order);
 
-    await this.cart.clearCart();
+    await this.cartService.clearCart();
     this.orderId.set(order.id);
     this.success.set(true);
     this.processing.set(false);

@@ -146,6 +146,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class CatalogComponent {
   private catalogService = inject(CatalogService);
+
   products = this.catalogService.products;
   totalProducts = this.catalogService.totalProducts;
   priceRange = this.catalogService.priceRange;

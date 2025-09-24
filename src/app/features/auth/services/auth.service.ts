@@ -6,8 +6,8 @@ import { User, LoginRequest, RegisterRequest } from '../models/user.model';
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUser = signal<User | null>(null);
-  public readonly _currentUser = this.currentUser.asReadonly();
+  private _currentUser = signal<User | null>(null);
+  public readonly currentUser = this._currentUser.asReadonly();
 
   private defaultUsers: User[] = [
     {
@@ -44,7 +44,7 @@ export class AuthService {
     this.loadUserFromStorage();
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
-      this.currentUser.set(JSON.parse(savedUser));
+      this._currentUser.set(JSON.parse(savedUser));
     }
   }
 
@@ -85,7 +85,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.currentUser.set(null);
+    this._currentUser.set(null);
     localStorage.removeItem('currentUser');
     localStorage.removeItem('authToken');}
 
@@ -131,7 +131,7 @@ export class AuthService {
   }
 
   setCurrentUser(user: User): void {
-    this.currentUser.set(user);
+    this._currentUser.set(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
   }
 }

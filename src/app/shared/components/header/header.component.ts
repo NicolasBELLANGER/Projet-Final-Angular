@@ -64,18 +64,18 @@ import { CartService } from '../../../features/cart/services/cart.service';
   `,
 })
 export class HeaderComponent {
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private cartService = inject(CartService);
 
-  currentUser = this.auth._currentUser;
+  currentUser = this.authService.currentUser;
   cartCount = this.cartService.totalItems;
 
   goCart() {
     this.router.navigate(['/cart']);
   }
   logout() {
-    this.auth.logout();
+    this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 }

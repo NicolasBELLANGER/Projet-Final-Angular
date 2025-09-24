@@ -157,19 +157,19 @@ import { RouterModule } from '@angular/router';
   `,
 })
 export class CartComponent implements OnInit {
-  private cart = inject(CartService);
-  private catalog = inject(CatalogService);
+  private cartService = inject(CartService);
+  private catalogService = inject(CatalogService);
 
-  cartItems = this.cart.cartItems;
-  totalItems = this.cart.totalItems;
-  totalPrice = this.cart.totalPrice;
+  cartItems = this.cartService.cartItems;
+  totalItems = this.cartService.totalItems;
+  totalPrice = this.cartService.totalPrice;
 
   products = new Map<number, Product>();
 
   async ngOnInit() {
     const items = this.cartItems();
     for (const item of items) {
-      const product = await this.catalog.getProductById(item.productId);
+      const product = await this.catalogService.getProductById(item.productId);
       if (product) {
         this.products.set(item.productId, product);
       }
@@ -181,13 +181,13 @@ export class CartComponent implements OnInit {
   }
 
   async removeOne(productId: number, size: number, color: string) {
-    await this.cart.deleteOneFromCart(productId, size, color);
+    await this.cartService.deleteOneFromCart(productId, size, color);
   }
 
   async addOne(productId: number, size: number, color: string) {
     const product = this.products.get(productId);
     if (product) {
-      await this.cart.addToCart(product, size, color, 1);
+      await this.cartService.addToCart(product, size, color, 1);
     }
   }
 }

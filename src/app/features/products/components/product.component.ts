@@ -78,11 +78,11 @@ import { AuthService } from '../../auth/services/auth.service';
 })
 export class ProductComponent {
   private readonly route = inject(ActivatedRoute);
-  private readonly catalog = inject(CatalogService);
-  private readonly cart = inject(CartService);
-  private readonly auth = inject(AuthService);
+  private readonly catalogService = inject(CatalogService);
+  private readonly cartService = inject(CartService);
+  private readonly authService = inject(AuthService);
 
-  currentUser = this.auth._currentUser;
+  currentUser = this.authService.currentUser;
 
   product?: Product;
   selectedSize?: number;
@@ -91,7 +91,7 @@ export class ProductComponent {
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.catalog.getProductById(id).then((p) => (this.product = p || undefined));
+    this.catalogService.getProductById(id).then((p) => (this.product = p || undefined));
     if (this.product) {
       this.selectedSize = this.product.sizes[0];
       this.selectedColor = this.product.colors[0];
@@ -114,7 +114,7 @@ export class ProductComponent {
 
   addToCart() {
     if (this.product && this.selectedSize && this.selectedColor) {
-      this.cart.addToCart(this.product, this.selectedSize, this.selectedColor, 1);
+      this.cartService.addToCart(this.product, this.selectedSize, this.selectedColor, 1);
     }
   }
 }

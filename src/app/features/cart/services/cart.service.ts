@@ -10,7 +10,7 @@ export class CartService {
   private readonly _cartItems = signal<CartItem[]>([]);
   readonly cartItems = this._cartItems.asReadonly();
 
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private userCart = (userId: number) => `userCart:${userId}`;
 
   readonly totalItems = computed(() =>
@@ -22,7 +22,7 @@ export class CartService {
 
   constructor() {
     effect(() => {
-      const user = this.auth._currentUser();
+      const user = this.authService.currentUser();
       if (!user) {
         this._cartItems.set([]);
         return;
@@ -32,7 +32,7 @@ export class CartService {
     });
 
     effect(() => {
-      const user = this.auth._currentUser();
+      const user = this.authService.currentUser();
       if (!user) return;
       localStorage.setItem(this.userCart(user.id), JSON.stringify(this._cartItems()));
     });
