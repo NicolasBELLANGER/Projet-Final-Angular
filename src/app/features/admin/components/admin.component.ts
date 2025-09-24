@@ -46,13 +46,12 @@ const parseColorsCsv = (csv: string): string[] =>
   imports: [CommonModule, CurrencyPipe, ColorsPipe, ReactiveFormsModule],
   template: `<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-3xl font-bold mb-6">Interface d'administration</h1>
-
-    <div class="flex space-x-4 mb-6">
+    <div class="flex flex-wrap sm:justify-start gap-2 sm:gap-4 mb-6">
       <button
         (click)="activeTab.set('users')"
         [class.bg-black]="activeTab() === 'users'"
         [class.text-white]="activeTab() === 'users'"
-        class="px-4 py-2 border border-black rounded"
+        class="text-sm px-3 py-1.5 sm:text-base sm:px-4 sm:py-2 border border-black rounded"
       >
         Utilisateurs
       </button>
@@ -60,7 +59,7 @@ const parseColorsCsv = (csv: string): string[] =>
         (click)="activeTab.set('products')"
         [class.bg-black]="activeTab() === 'products'"
         [class.text-white]="activeTab() === 'products'"
-        class="px-4 py-2 border border-black rounded"
+        class="text-sm px-3 py-1.5 sm:text-base sm:px-4 sm:py-2 border border-black rounded"
       >
         Produits
       </button>
@@ -68,7 +67,7 @@ const parseColorsCsv = (csv: string): string[] =>
         (click)="activeTab.set('orders')"
         [class.bg-black]="activeTab() === 'orders'"
         [class.text-white]="activeTab() === 'orders'"
-        class="px-4 py-2 border border-black rounded"
+        class="text-sm px-3 py-1.5 sm:text-base sm:px-4 sm:py-2 border border-black rounded"
       >
         Commandes
       </button>
@@ -76,7 +75,7 @@ const parseColorsCsv = (csv: string): string[] =>
         (click)="activeTab.set('create')"
         [class.bg-black]="activeTab() === 'create'"
         [class.text-white]="activeTab() === 'create'"
-        class="px-4 py-2 border border-black rounded"
+        class="text-sm px-3 py-1.5 sm:text-base sm:px-4 sm:py-2 border border-black rounded"
       >
         Créer un produit
       </button>
@@ -229,7 +228,7 @@ const parseColorsCsv = (csv: string): string[] =>
         <!--MOBILE-->
         <div class="md:hidden space-y-4">
           @for (o of order(); track o.id) {
-            <li class="border rounded p-4">
+            <li class="border rounded p-4 list-none">
               <div class="font-semibold mb-1">Commande #{{ o.id }}</div>
               <div class="text-sm text-gray-600 mb-2">
                 Passée le {{ o.createdAt | date: 'mediumDate' }} — Total :
