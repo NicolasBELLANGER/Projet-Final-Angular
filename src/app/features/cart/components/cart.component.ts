@@ -17,40 +17,40 @@ import { RouterModule } from '@angular/router';
         <ng-container>
           <!--MOBILE-->
           <div class="md:hidden space-y-4">
-            @for (item of cartItems(); track item.productId) {
+            @for (i of cartItems(); track i.productId) {
               <div class="rounded-lg border p-4 flex gap-4">
-                @if (getProduct(item.productId)) {
+                @if (getProduct(i.productId)) {
                   <ng-container>
                     <img
-                      [src]="item.imageUrl"
-                      [alt]="item.name"
+                      [src]="i.imageUrl"
+                      [alt]="i.name"
                       loading="lazy"
                       class="w-20 h-20 sm:w-24 sm:h-24 rounded-md object-cover flex-shrink-0"
                     />
                     <div class="flex-1">
-                      <div class="font-semibold">{{ item.name }}</div>
+                      <div class="font-semibold">{{ i.name }}</div>
                       <div class="text-sm text-gray-600">
-                        Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
+                        Taille : {{ i.size }} • Couleur : {{ i.color | colors }}
                       </div>
 
                       <div class="mt-2 flex items-center justify-between">
                         <div class="text-sm font-medium">
-                          {{ item.price | currency: 'EUR' }}
+                          {{ i.price | currency: 'EUR' }}
                         </div>
 
                         <div class="flex items-center gap-2">
                           <button
-                            (click)="removeOne(item.productId, item.size, item.color)"
+                            (click)="removeOne(i.productId, i.size, i.color)"
                             class="h-9 w-9 rounded-full bg-red-500 text-white grid place-items-center active:scale-95"
                             aria-label="Diminuer la quantité"
                           >
                             −
                           </button>
 
-                          <span class="w-8 text-center">{{ item.quantity }}</span>
+                          <span class="w-8 text-center">{{ i.quantity }}</span>
 
                           <button
-                            (click)="addOne(item.productId, item.size, item.color)"
+                            (click)="addOne(i.productId, i.size, i.color)"
                             class="h-9 w-9 rounded-full bg-green-600 text-white grid place-items-center active:scale-95"
                             aria-label="Augmenter la quantité"
                           >
@@ -60,7 +60,7 @@ import { RouterModule } from '@angular/router';
                       </div>
 
                       <div class="mt-1 text-right text-sm font-semibold">
-                        Total : {{ item.price * item.quantity | currency: 'EUR' }}
+                        Total : {{ i.price * i.quantity | currency: 'EUR' }}
                       </div>
                     </div>
                   </ng-container>
@@ -84,41 +84,41 @@ import { RouterModule } from '@angular/router';
                   </tr>
                 </thead>
                 <tbody>
-                  @for (item of cartItems(); track item.productId) {
+                  @for (i of cartItems(); track i.productId) {
                     <tr class="border-b">
-                      @if (getProduct(item.productId); as product) {
+                      @if (getProduct(i.productId); as product) {
                         <ng-container>
                           <td class="py-3 px-4">
                             <div class="flex items-center gap-4">
                               <img
-                                [src]="item.imageUrl"
-                                [alt]="item.name"
+                                [src]="i.imageUrl"
+                                [alt]="i.name"
                                 loading="lazy"
                                 class="w-16 h-16 rounded object-cover"
                               />
                               <div>
-                                <div class="font-semibold">{{ item.name }}</div>
+                                <div class="font-semibold">{{ i.name }}</div>
                                 <div class="text-sm text-gray-600">
-                                  Taille : {{ item.size }} • Couleur : {{ item.color | colors }}
+                                  Taille : {{ i.size }} • Couleur : {{ i.color | colors }}
                                 </div>
                               </div>
                             </div>
                           </td>
-                          <td class="py-3 px-4">{{ item.price | currency: 'EUR' }}</td>
-                          <td class="py-3 px-4">{{ item.quantity }}</td>
+                          <td class="py-3 px-4">{{ i.price | currency: 'EUR' }}</td>
+                          <td class="py-3 px-4">{{ i.quantity }}</td>
                           <td class="py-3 px-4">
-                            {{ item.price * item.quantity | currency: 'EUR' }}
+                            {{ i.price * i.quantity | currency: 'EUR' }}
                           </td>
                           <td class="py-3 px-4">
                             <div class="flex gap-2">
                               <button
-                                (click)="removeOne(item.productId, item.size, item.color)"
+                                (click)="removeOne(i.productId, i.size, i.color)"
                                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                               >
                                 −
                               </button>
                               <button
-                                (click)="addOne(item.productId, item.size, item.color)"
+                                (click)="addOne(i.productId, i.size, i.color)"
                                 class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
                               >
                                 +

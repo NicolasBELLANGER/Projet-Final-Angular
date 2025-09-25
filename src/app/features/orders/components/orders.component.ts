@@ -14,35 +14,35 @@ import { ColorsPipe } from '../../../shared/pipes/colors.pipe';
       <h1 class="text-xl font-bold mb-4">Mes commandes</h1>
       @if (orders.length > 0) {
         <ul class="space-y-6">
-          @for (order of orders; track order.id) {
+          @for (o of orders; track o.id) {
             <li class="border rounded p-4">
-              <div class="font-semibold mb-1">Commande #{{ order.id }}</div>
+              <div class="font-semibold mb-1">Commande #{{ o.id }}</div>
               <div class="text-sm text-gray-600 mb-2">
-                Passée le {{ order.createdAt | date: 'mediumDate' }} — Total :
-                <strong>{{ order.pricing.totalPrice | currency: 'EUR' }}</strong>
+                Passée le {{ o.createdAt | date: 'mediumDate' }} — Total :
+                <strong>{{ o.pricing.totalPrice | currency: 'EUR' }}</strong>
               </div>
               <div class="text-sm mb-4">
-                Livraison : {{ order.deliveryTo.address }}, {{ order.deliveryTo.postcode }}
-                {{ order.deliveryTo.city }}
+                Livraison : {{ o.deliveryTo.address }}, {{ o.deliveryTo.postcode }}
+                {{ o.deliveryTo.city }}
               </div>
               <ul class="space-y-2 text-sm">
-                @for (item of order.items; track item.productId) {
+                @for (i of o.items; track i.productId) {
                   <li class="flex items-center justify-between gap-3">
                     <img
-                      [src]="item.imageUrl"
-                      [alt]="item.name"
+                      [src]="i.imageUrl"
+                      [alt]="i.name"
                       class="w-14 h-14 rounded object-cover flex-shrink-0"
                       loading="lazy"
                     />
                     <div class="flex-1 text-sm">
-                      <div class="font-medium">{{ item.name }}</div>
+                      <div class="font-medium">{{ i.name }}</div>
                       <div>
-                        Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
-                        {{ item.quantity }}
+                        Couleur {{ i.color | colors }} · Taille {{ i.size }} · Quantité
+                        {{ i.quantity }}
                       </div>
                     </div>
                     <div class="font-semibold text-right">
-                      {{ item.price * item.quantity | currency: 'EUR' }}
+                      {{ i.price * i.quantity | currency: 'EUR' }}
                     </div>
                   </li>
                 }

@@ -86,33 +86,33 @@ const parseColorsCsv = (csv: string): string[] =>
         <h2 class="text-xl font-semibold mb-4">Liste des utilisateurs</h2>
         <!--MOBILE-->
         <div class="md:hidden space-y-4">
-          @for (user of users(); track user.id) {
+          @for (u of users(); track u.id) {
             <article class="rounded-lg border p-4 shadow-sm">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <div class="font-semibold text-base">
-                    {{ user.firstname }} {{ user.lastname }}
+                    {{ u.firstname }} {{ u.lastname }}
                   </div>
-                  <div class="text-sm text-gray-600 break-all">{{ user.email }}</div>
+                  <div class="text-sm text-gray-600 break-all">{{ u.email }}</div>
                 </div>
                 <span
                   class="text-xs px-2 py-1 rounded-full border"
-                  [class.bg-gray-900]="user.role === 'admin'"
-                  [class.text-white]="user.role === 'admin'"
-                  >{{ user.role }}</span
+                  [class.bg-gray-900]="u.role === 'admin'"
+                  [class.text-white]="u.role === 'admin'"
+                  >{{ u.role }}</span
                 >
               </div>
               <div class="mt-3 flex justify-end">
-                @if (user.role !== 'admin') {
+                @if (u.role !== 'admin') {
                   <button
-                    (click)="deleteUser(user.id)"
+                    (click)="deleteUser(u.id)"
                     class="text-red-600 text-sm font-medium hover:underline active:scale-95"
                     aria-label="Supprimer l'utilisateur"
                   >
                     Supprimer
                   </button>
                 }
-                @if (user.role === 'admin') {
+                @if (u.role === 'admin') {
                   <span class="text-gray-500 text-sm">Admin</span>
                 }
               </div>
@@ -133,19 +133,19 @@ const parseColorsCsv = (csv: string): string[] =>
                 </tr>
               </thead>
               <tbody>
-                @for (user of users(); track user.id) {
+                @for (u of users(); track u.id) {
                   <tr>
-                    <td class="px-4 py-2">{{ user.firstname }}</td>
-                    <td class="px-4 py-2">{{ user.lastname }}</td>
-                    <td class="px-4 py-2">{{ user.email }}</td>
-                    <td class="px-4 py-2 capitalize">{{ user.role }}</td>
+                    <td class="px-4 py-2">{{ u.firstname }}</td>
+                    <td class="px-4 py-2">{{ u.lastname }}</td>
+                    <td class="px-4 py-2">{{ u.email }}</td>
+                    <td class="px-4 py-2 capitalize">{{ u.role }}</td>
                     <td class="px-4 py-2">
-                      @if (user.role !== 'admin') {
-                        <button (click)="deleteUser(user.id)" class="text-red-600 hover:underline">
+                      @if (u.role !== 'admin') {
+                        <button (click)="deleteUser(u.id)" class="text-red-600 hover:underline">
                           Supprimer
                         </button>
                       }
-                      @if (user.role === 'admin') {
+                      @if (u.role === 'admin') {
                         <span class="text-gray-500">Admin</span>
                       }
                     </td>
@@ -239,23 +239,23 @@ const parseColorsCsv = (csv: string): string[] =>
                 {{ o.deliveryTo.city }}
               </div>
               <ul class="space-y-2 text-sm">
-                @for (item of o.items; track item.productId) {
+                @for (i of o.items; track i.productId) {
                   <li class="flex items-center justify-between gap-3">
                     <img
-                      [src]="item.imageUrl"
-                      [alt]="item.name"
+                      [src]="i.imageUrl"
+                      [alt]="i.name"
                       class="w-14 h-14 rounded object-cover flex-shrink-0"
                       loading="lazy"
                     />
                     <div class="flex-1 text-sm">
-                      <div class="font-medium">{{ item.name }}</div>
+                      <div class="font-medium">{{ i.name }}</div>
                       <div>
-                        Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
-                        {{ item.quantity }}
+                        Couleur {{ i.color | colors }} · Taille {{ i.size }} · Quantité
+                        {{ i.quantity }}
                       </div>
                     </div>
                     <div class="font-semibold text-right">
-                      {{ item.price * item.quantity | currency: 'EUR' }}
+                      {{ i.price * i.quantity | currency: 'EUR' }}
                     </div>
                   </li>
                 }
@@ -278,23 +278,23 @@ const parseColorsCsv = (csv: string): string[] =>
                   {{ o.deliveryTo.city }}
                 </div>
                 <ul class="space-y-2 text-sm">
-                  @for (item of o.items; track item.productId) {
+                  @for (i of o.items; track i.productId) {
                     <li class="flex items-center justify-between gap-3">
                       <img
-                        [src]="item.imageUrl"
-                        [alt]="item.name"
+                        [src]="i.imageUrl"
+                        [alt]="i.name"
                         class="w-14 h-14 rounded object-cover flex-shrink-0"
                         loading="lazy"
                       />
                       <div class="flex-1 text-sm">
-                        <div class="font-medium">{{ item.name }}</div>
+                        <div class="font-medium">{{ i.name }}</div>
                         <div>
-                          Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
-                          {{ item.quantity }}
+                          Couleur {{ i.color | colors }} · Taille {{ i.size }} · Quantité
+                          {{ i.quantity }}
                         </div>
                       </div>
                       <div class="font-semibold text-right">
-                        {{ item.price * item.quantity | currency: 'EUR' }}
+                        {{ i.price * i.quantity | currency: 'EUR' }}
                       </div>
                     </li>
                   }

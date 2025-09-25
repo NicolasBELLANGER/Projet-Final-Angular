@@ -35,23 +35,23 @@ import { ReactiveFormsModule } from '@angular/forms';
           }
         </div>
         <ul class="space-y-3 mb-6">
-          @for (item of items(); track item) {
+          @for (i of items(); track i) {
             <li class="flex items-center justify-between gap-3">
               <img
-                [src]="item.imageUrl"
-                [alt]="item.name"
+                [src]="i.imageUrl"
+                [alt]="i.name"
                 class="w-14 h-14 rounded object-cover flex-shrink-0"
                 loading="lazy"
               />
               <div class="flex-1 text-sm">
-                <div class="font-medium">{{ item.name }}</div>
+                <div class="font-medium">{{ i.name }}</div>
                 <div>
-                  Couleur {{ item.color | colors }} · Taille {{ item.size }} · Quantité
-                  {{ item.quantity }}
+                  Couleur {{ i.color | colors }} · Taille {{ i.size }} · Quantité
+                  {{ i.quantity }}
                 </div>
               </div>
               <div class="font-semibold text-right">
-                {{ item.price * item.quantity | currency: 'EUR' }}
+                {{ i.price * i.quantity | currency: 'EUR' }}
               </div>
             </li>
           }
