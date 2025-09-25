@@ -19,6 +19,7 @@ import {
 import { OrdersService } from '../../orders/services/orders.service';
 import { Order } from '../../orders/models/orders.models';
 
+//Field-level validator ensuring the CSV contains at least one valid number.
 const csvHasNumber: ValidatorFn = (ctrl: AbstractControl): ValidationErrors | null =>
   String(ctrl.value ?? '')
     .split(/[,\s;]+/)
@@ -27,12 +28,14 @@ const csvHasNumber: ValidatorFn = (ctrl: AbstractControl): ValidationErrors | nu
     ? null
     : { csvHasNumber: true };
 
+//Normalize and parse sizes from CSV into number[]
 const parseSizesCsv = (csv: string): number[] =>
   (csv ?? '')
     .split(/[,\s;]+/)
     .map((s) => parseFloat(s.replace(',', '.').trim()))
     .filter((n) => Number.isFinite(n));
 
+//Normalize and title-case colors from CSV (ex: "black" -> "Black").
 const parseColorsCsv = (csv: string): string[] =>
   (csv ?? '')
     .split(/[,\s;]+/)
@@ -410,6 +413,7 @@ export class AdminComponent implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
+  //Reactive form
   createForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     brand: ['', [Validators.required, Validators.minLength(2)]],
@@ -431,6 +435,7 @@ export class AdminComponent implements OnInit {
   editing = signal(false);
 
   async ngOnInit() {
+    //Guard
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser || currentUser.role !== 'admin') {
       this.router.navigate(['/todos']);
@@ -507,11 +512,13 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  //Field error helper — shows error only after user interaction.
   isFieldInvalid(fieldName: string): boolean {
     const c = this.createForm.get(fieldName);
     return !!(c && c.invalid && (c.dirty || c.touched));
   }
 
+  //Map validation errors to user-friendly messages.
   getFieldError(fieldName: string): string {
     const c = this.createForm.get(fieldName);
     if (!c || !c.errors) return '';
@@ -523,6 +530,7 @@ export class AdminComponent implements OnInit {
     return 'Valeur invalide.';
   }
 
+  //Uses the pipe imperatively
   getColors(colors: string[]): string {
     return colors.map((color) => new ColorsPipe().transform(color)).join(', ');
   }

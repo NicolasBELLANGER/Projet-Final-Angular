@@ -89,16 +89,20 @@ export class ProductComponent {
   selectedColor?: string;
   selectedColorIndex?: number;
 
+//Load product asynchronously, then set defaults once we have data.
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.catalogService.getProductById(id).then((p) => (this.product = p || undefined));
     if (this.product) {
+      //Default to first available size/color if present.
       this.selectedSize = this.product.sizes[0];
       this.selectedColor = this.product.colors[0];
       this.selectedColorIndex = 0;
     }
   }
 
+  //Decide which image to show; if the second color is selected (index 1),
+  //and image2 exists, use it; otherwise fallback to image1.
   get mainImage(): string | undefined {
     const product = this.product;
     if (!product) {

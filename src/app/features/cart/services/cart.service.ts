@@ -7,7 +7,9 @@ import { CartItem } from '../models/cart.models';
   providedIn: 'root',
 })
 export class CartService {
+  //Private writable state
   private readonly _cartItems = signal<CartItem[]>([]);
+  //Public read-only view
   readonly cartItems = this._cartItems.asReadonly();
 
   private authService = inject(AuthService);

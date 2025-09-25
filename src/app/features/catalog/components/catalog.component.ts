@@ -147,6 +147,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class CatalogComponent {
   private catalogService = inject(CatalogService);
 
+  //Read-only reactive data
   products = this.catalogService.products;
   totalProducts = this.catalogService.totalProducts;
   priceRange = this.catalogService.priceRange;
@@ -164,7 +165,7 @@ export class CatalogComponent {
       this.maxPrice.set(range.max);
     });
   }
-
+//Derive available brands from current products
   brands = computed(() => {
     const set = new Set(
       this.products()
@@ -174,6 +175,7 @@ export class CatalogComponent {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   });
 
+  //Derive available colors from current products
   colors = computed(() => {
     const set = new Set(
       this.products()
@@ -183,11 +185,14 @@ export class CatalogComponent {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   });
 
+  //Clamp the new min within [range.min, current max]
   onMinPriceInput(val: number) {
     const range = this.priceRange();
     const clamped = Math.min(Math.max(val, range.min), this.maxPrice());
     this.minPrice.set(clamped);
   }
+
+  //Clamp the new max within [current min, range.max]
   onMaxPriceInput(val: number) {
     const range = this.priceRange();
     const clamped = Math.max(Math.min(val, range.max), this.minPrice());
@@ -211,6 +216,8 @@ export class CatalogComponent {
     }
   }
 
+  //Derived filtered list. Runs in O(n) over products,
+  //and recomputes only when any dependency Signal changes (fine-grained reactivity).
   visibleProducts = computed<Product[]>(() => {
     const list = this.products();
     const min = this.minPrice();

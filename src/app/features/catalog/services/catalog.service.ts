@@ -6,12 +6,12 @@ import { CreateProductRequest, Product, UpdateProductRequest } from '../models/c
   providedIn: 'root',
 })
 export class CatalogService {
-  //State privé
+  //Private writable state
   private readonly _products = signal<Product[]>(PRODUCTS);
-  //State public
+  //Public read-only view
   readonly products = this._products.asReadonly();
 
-  //Computed
+// Derived state (computed)
   readonly totalProducts = computed(() => this._products().length);
   readonly priceRange = computed(() => {
     const prices = this._products().map((p) => p.price);
@@ -25,6 +25,7 @@ export class CatalogService {
     if (saved) {
       this._products.set(JSON.parse(saved));
     }
+    // Persistence effect
     effect(() => {
       localStorage.setItem('products', JSON.stringify(this._products()));
     });

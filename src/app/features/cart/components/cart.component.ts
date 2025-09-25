@@ -164,6 +164,7 @@ export class CartComponent implements OnInit {
   totalItems = this.cartService.totalItems;
   totalPrice = this.cartService.totalPrice;
 
+  //Local cache of full Product objects
   products = new Map<number, Product>();
 
   async ngOnInit() {

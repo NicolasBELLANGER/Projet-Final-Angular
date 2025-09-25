@@ -10,9 +10,7 @@ import { signal } from '@angular/core';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div
-      class="min-h-[70vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-    >
+    <div class="min-h-[70vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-md w-full space-y-8">
         <div>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -94,10 +92,13 @@ export class LoginComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
+  //Reactive Form group for login.
   loginForm: FormGroup;
+
   loading = signal(false);
   error = signal<string>('');
 
+  //Build the form with sync validators (required/email/minLength).
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -125,11 +126,13 @@ export class LoginComponent {
     }
   }
 
+  //Field error state helper
   isFieldInvalid(fieldName: string): boolean {
     const field = this.loginForm.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
+  //Maps validator keys to human-friendly messages for the template.
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
     if (field?.errors) {

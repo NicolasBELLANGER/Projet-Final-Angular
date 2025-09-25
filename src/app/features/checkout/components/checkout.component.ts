@@ -160,6 +160,11 @@ export class CheckoutComponent {
     this.showPrice.update((value) => !value);
   }
 
+  //Live input masking/cleaning using valueChanges. We keep only digits
+    //     and reformat:
+    //     - cardNumber: groups of 4 (max 16 digits) -> "1234 5678 9012 3456"
+    //     - expiry: "MM/AA" (auto-inserts slash)
+    //     - cvc: 3 digits
   constructor() {
     this.cardForm.controls.cardNumber.valueChanges.subscribe((val) => {
       if (val === null) return;
@@ -196,6 +201,7 @@ export class CheckoutComponent {
     });
   });
 
+  //Switch delivery fee between standard and express.
   setDelivery(type: 'standard' | 'express') {
     this.delivery.set(type === 'express' ? 9.9 : 0);
   }
@@ -250,6 +256,7 @@ export class CheckoutComponent {
     this.processing.set(false);
   }
 
+  //Minimal validation with regex; combined with live masking above.
   cardForm = this.fb.nonNullable.group({
     cardNumber: ['', [Validators.required, Validators.pattern(/^(\d{4} ?){3}\d{4}$/)]],
     cardName: ['', [Validators.required, Validators.minLength(2)]],

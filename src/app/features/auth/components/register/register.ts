@@ -11,6 +11,8 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+//Cross-field validator attached at the FormGroup level.
+//It reads both 'password' and 'confirmPassword' to ensure they match.
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -217,10 +219,13 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  //Reactive form group
   registerForm: FormGroup;
+
   loading = signal(false);
   error = signal<string>('');
 
+  //Build the form
   constructor() {
     this.registerForm = this.fb.group(
       {
@@ -262,6 +267,7 @@ export class RegisterComponent {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
+  //Custom control-level validator: city must not contain digits.
   noNumbersValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (value && /\d/.test(value)) {
