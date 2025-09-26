@@ -1,59 +1,77 @@
-# ProjetFinalAngular
+# SneakPeak
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+Un site e-commerce dédié au monde des sneakers et à sa vente. Développée avec **Angular 20.3.1**, déployée sur **Vercel** et configurée en **Progressive Web App (PWA)**.
 
-## Development server
+🌐 **Lien de production Vercel** : [https://projet-final-angular.vercel.app/catalog](https://projet-final-angular.vercel.app/catalog)
 
-To start a local development server, run:
+---
+
+## Fonctionnalités
+
+### Partie Shop (Client)
+
+- **Authentification** : Page de connexion et d'inscription
+- **Catalogue produits** : Navigation et recherche dans le catalogue
+- **Page produits** : Navigation sur une page produit en fonction de celui sélectionné avec bouton "ajouter au panier"
+- **Panier d'achat** : Ajout/suppression d'articles avec gestion des quantités dynamiques
+- **Validation du panier et commande** : Récapitulatif avant commande avec date de livraison et système de paiement
+- **Historique des commandes** : Liste des commandes précédement faites
+
+### 👨‍💼 Partie Admin
+
+- **Dashboard** : 4 entrées pour la gestion du site pour les admins
+  - Gestion des users
+  - Gestion des produits
+  - Historique de toutes les commandes users
+  - Création de produit
+
+---
+
+## ⚡ Technologies utilisées
+
+- **Framework** : Angular CLI v20.3.1
+- **Tailwindcss** : Pour la gestion de styles
+- **PWA** : Progressive Web App (offline, installation, notifications)
+- **Déploiement** : [Vercel](https://vercel.com/) pour un déploiement continu
+
+---
+
+## 🛠️ Développement
+
+### 🔧 Serveur de développement
+
+Pour démarrer un serveur de développement local :
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+L'application sera lancé et accessible directement sur http://localhost:4200/. Le rechargement automatique est activé lors des modifications de fichiers.
 
-## Code scaffolding
+### Build de production
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Pour compiler le projet :
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+##  Tests
 
-## Running unit tests
+### Tests unitaires et d'intégration
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Les tests unitaires utilisent Karma et Jasmine :
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+##  PWA
 
-For end-to-end (e2e) testing, run:
+L'application est configuré pour être en PWA, ce qui lui permet d'être installer sur votre écran d'accueil, d'avoir des fonctionnalités hors ligne et des performances optimisées.
 
-```bash
-ng e2e
-```
+##  Déploiement
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Vercel
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+L'application est déploiement via vercel, voici le lien : https://projet-final-angular.vercel.app/catalog
